@@ -1,5 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "TDS.h"
 #include "Modules/ModuleManager.h"
 

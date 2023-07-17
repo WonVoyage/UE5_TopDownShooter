@@ -1,11 +1,10 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "TDSGameMode.generated.h"
 
+//-------------------------------------------------------------------------------------------------------------
 UCLASS(minimalapi)
 class ATDSGameMode : public AGameModeBase
 {
@@ -14,6 +13,4 @@ class ATDSGameMode : public AGameModeBase
 public:
 	ATDSGameMode();
 };
-
-
-
+//-------------------------------------------------------------------------------------------------------------
