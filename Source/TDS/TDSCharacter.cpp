@@ -9,6 +9,7 @@
 
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
+	: Movement_State(EMovement_State::Run)
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -40,23 +41,37 @@ ATDSCharacter::ATDSCharacter()
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Tick(float DeltaSeconds)
 {
-    Super::Tick(DeltaSeconds);
-	 //Movement_Tick(DeltaSeconds);
+	Super::Tick(DeltaSeconds);
 }
 //-------------------------------------------------------------------------------------------------------------
-//void ATDSCharacter::Input_Axis_X(float value)
-//{
-//	Axis_X = value;
-//}
-////-------------------------------------------------------------------------------------------------------------
-//void ATDSCharacter::Input_Axis_Y(float value)
-//{
-//	Axis_Y = value;
-//}
-////-------------------------------------------------------------------------------------------------------------
-//void ATDSCharacter::Movement_Tick(float delta_seconds)
-//{
-//	this->AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Axis_X);
-//	this->AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Axis_Y);
-//}
+void ATDSCharacter::Update()
+{
+	float result_speed = 600.0;
+
+	switch (Movement_State)
+	{
+	case EMovement_State::Aim:
+		result_speed = Movement_Info.Aim;
+		break;
+
+	case EMovement_State::Walk:
+		result_speed = Movement_Info.Walk;
+		break;
+
+	case EMovement_State::Run:
+		result_speed = Movement_Info.Run;
+		break;
+
+	default:
+		break;
+	}
+
+	GetCharacterMovement()->MaxWalkSpeed = result_speed;
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Change_Movement_State(EMovement_State new_state)
+{
+	Movement_State = new_state;
+	Update();
+}
 //-------------------------------------------------------------------------------------------------------------
