@@ -36,6 +36,8 @@ void ATDSPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &ATDSPlayerController::OnSetDestinationTriggered);
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &ATDSPlayerController::OnSetDestinationReleased);
 		EnhancedInputComponent->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &ATDSPlayerController::OnSetDestinationReleased);
+		//EnhancedInputComponent->BindAction(Scroll_Action, ETriggerEvent::Canceled, this, &ATDSPlayerController::Scroll);
+
 
 		// Setup touch input events
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Started, this, &ATDSPlayerController::OnInputStarted);
@@ -45,7 +47,6 @@ void ATDSPlayerController::SetupInputComponent()
 	
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATDSPlayerController::Move);
-
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
