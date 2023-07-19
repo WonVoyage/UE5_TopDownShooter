@@ -98,6 +98,7 @@ void ATDSCharacter::Change_Movement_State()
 				if(!Walk_Enabled && !Sprint_Run_Enabled && Aim_Enabled)
 					Movement_State = EMovement_State::Aim;
 	}
+
 	Update();
 }
 //-------------------------------------------------------------------------------------------------------------
