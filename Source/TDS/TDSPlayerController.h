@@ -25,7 +25,6 @@ public:
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true")) class UInputAction* MoveAction;
 
-
 protected:
 	uint32 bMoveToMouseCursor : 1;	//* True if the controlled character should navigate to the mouse cursor
 

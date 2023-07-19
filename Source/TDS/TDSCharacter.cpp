@@ -9,7 +9,7 @@
 
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
-	: Movement_State(EMovement_State::Run)
+	: Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false)
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -54,6 +54,10 @@ void ATDSCharacter::Update()
 		result_speed = Movement_Info.Aim;
 		break;
 
+	case EMovement_State::Aim_Walk:
+		result_speed = Movement_Info.Aim_Walk;
+		break;
+
 	case EMovement_State::Walk:
 		result_speed = Movement_Info.Walk;
 		break;
@@ -62,6 +66,10 @@ void ATDSCharacter::Update()
 		result_speed = Movement_Info.Run;
 		break;
 
+	case EMovement_State::Sprint:
+		result_speed = Movement_Info.Sprint;
+		break;
+	
 	default:
 		break;
 	}
@@ -69,9 +77,27 @@ void ATDSCharacter::Update()
 	GetCharacterMovement()->MaxWalkSpeed = result_speed;
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Change_Movement_State(EMovement_State new_state)
+void ATDSCharacter::Change_Movement_State()
 {
-	Movement_State = new_state;
+	if(!Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled)
+		Movement_State = EMovement_State::Run;
+	else
+	{
+		if(Sprint_Run_Enabled)
+		{
+			Walk_Enabled = false;
+			Aim_Enabled = false;
+			Movement_State = EMovement_State::Sprint;
+		}
+		if(Walk_Enabled && !Sprint_Run_Enabled && Aim_Enabled)
+			Movement_State = EMovement_State::Aim_Walk;
+		else
+			if(Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled)
+				Movement_State = EMovement_State::Walk;
+			else
+				if(!Walk_Enabled && !Sprint_Run_Enabled && Aim_Enabled)
+					Movement_State = EMovement_State::Aim;
+	}
 	Update();
 }
 //-------------------------------------------------------------------------------------------------------------
