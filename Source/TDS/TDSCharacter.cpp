@@ -1,12 +1,11 @@
 #include "TDSCharacter.h"
-//#include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-//#include "Materials/Material.h"
-//#include "Engine/World.h"
 
+
+AWeapon_Default *ATDSCharacter::Curr_Weapon = 0;
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
 	: Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false)
@@ -44,9 +43,40 @@ void ATDSCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 //-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	Weapon_Init();
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Weapon_Init()
+{
+	if (!Weapon_Class)
+		return;
+
+	FVector spawn_location;
+	FRotator spawn_rotation;
+	FActorSpawnParameters spawn_params;
+
+	spawn_location = FVector(ForceInitToZero);
+	spawn_rotation = FRotator(ForceInitToZero);
+	spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	spawn_params.Owner = GetOwner();
+	spawn_params.Instigator = GetInstigator();
+
+	if (AWeapon_Default *weapon = Cast<AWeapon_Default>(GetWorld()->SpawnActor(Weapon_Class, &spawn_location, &spawn_rotation, spawn_params)))
+	{
+		FAttachmentTransformRules rule(EAttachmentRule::SnapToTarget, false);
+		weapon->AttachToComponent(GetMesh(), rule, FName("Weapon_Socket_Right_Hand"));
+		Curr_Weapon = weapon;
+	}
+}
+//-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Update()
 {
-	float result_speed = 600.0;
+	float result_speed;
+
+	result_speed = 600.0;
 
 	switch (Movement_State)
 	{
@@ -100,5 +130,15 @@ void ATDSCharacter::Change_Movement_State()
 	}
 
 	Update();
+}
+//-------------------------------------------------------------------------------------------------------------
+AWeapon_Default *ATDSCharacter::Get_Weapon()
+{
+	return Curr_Weapon;
+}
+//-------------------------------------------------------------------------------------------------------------
+ATDSCharacter *ATDSCharacter::Get_Character()
+{
+	return this;
 }
 //-------------------------------------------------------------------------------------------------------------
