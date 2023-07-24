@@ -63,6 +63,7 @@ void AWeapon_Default::Fire()
 void AWeapon_Default::BeginPlay()
 {
 	Super::BeginPlay();
+
 	Weapon_Init();
 }
 //-------------------------------------------------------------------------------------------------------------
@@ -81,6 +82,16 @@ void AWeapon_Default::Set_Weapon_State_Fire(bool is_fire)
 		Weapon_Fire = is_fire;
 	else
 		Weapon_Fire = false;
+}
+//-------------------------------------------------------------------------------------------------------------
+void AWeapon_Default::Update_State_Weapon(EMovement_State movement_state)
+{
+	Change_Dispersion();
+}
+//-------------------------------------------------------------------------------------------------------------
+void AWeapon_Default::Change_Dispersion()
+{
+
 }
 //-------------------------------------------------------------------------------------------------------------
 bool AWeapon_Default::Weapon_Can_Fire()

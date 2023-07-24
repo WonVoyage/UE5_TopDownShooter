@@ -6,6 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Weapon_Default.h"
+#include "Game_Instance.h"
 #include "TDSCharacter.generated.h"
 
 //-------------------------------------------------------------------------------------------------------------
@@ -22,7 +23,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
 
-	void Weapon_Init();
+	void Init_Weapon(FName id_weapon);
 
 	UFUNCTION(BlueprintCallable) void Update();
 	UFUNCTION(BlueprintCallable) void Change_Movement_State();
@@ -38,6 +39,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") bool Sprint_Run_Enabled;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") bool Walk_Enabled;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") bool Aim_Enabled;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Demo") FName Init_Weapon_Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Demo") TSubclassOf<AWeapon_Default> Weapon_Class;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera") UCameraComponent* TopDownCameraComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera") USpringArmComponent* CameraBoom;

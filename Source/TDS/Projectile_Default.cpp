@@ -6,7 +6,7 @@ AProjectile_Default::AProjectile_Default()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Bullet_Collision_Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Sphere"));
-	Bullet_Collision_Sphere->SetSphereRadius(16.0);
+	Bullet_Collision_Sphere->SetSphereRadius(4.0);
 	Bullet_Collision_Sphere->OnComponentHit.AddDynamic(this, &AProjectile_Default::Collision_Hit);
 	Bullet_Collision_Sphere->OnComponentBeginOverlap.AddDynamic(this, &AProjectile_Default::Collision_Begin_Overlap);
 	Bullet_Collision_Sphere->OnComponentEndOverlap.AddDynamic(this, &AProjectile_Default::Collision_End_Overlap);
@@ -27,7 +27,7 @@ AProjectile_Default::AProjectile_Default()
 	Bullet_Projectile_Movement->InitialSpeed = 1.0;
 	Bullet_Projectile_Movement->MaxSpeed = 0;
 	Bullet_Projectile_Movement->bRotationFollowsVelocity = true;
-	Bullet_Projectile_Movement->bShouldBounce = true;
+	//Bullet_Projectile_Movement->bShouldBounce = true;
 }
 //-------------------------------------------------------------------------------------------------------------
 void AProjectile_Default::Tick(float DeltaTime)

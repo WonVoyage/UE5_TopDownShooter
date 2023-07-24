@@ -20,8 +20,6 @@ public:
 	ATDSPlayerController();
 
 	// Variables
-	//ATDSCharacter *Character;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UNiagaraSystem* FXCursor;	// FX Class that we will spawn when clicking
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputMappingContext* DefaultMappingContext;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* SetDestinationClickAction;	// Jump Input Action

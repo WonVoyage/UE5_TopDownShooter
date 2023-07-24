@@ -23,6 +23,8 @@ public:
 	void Fire();
 	void Weapon_Init();
 	void Set_Weapon_State_Fire(bool is_fire);
+	void Update_State_Weapon(EMovement_State movement_state);
+	void Change_Dispersion();
 	bool Weapon_Can_Fire();
 
 	// Variables
@@ -32,13 +34,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") USkeletalMeshComponent *Skeletal_Mesh_Weapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") UStaticMeshComponent *Static_Mesh_Weapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") UArrowComponent *Shoot_Location;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire_Logic") FWeapon_Info Weapon_Settings;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Info") FAdditional_Weapon_Info Weapon_Info;
+	UPROPERTY() FWeapon_Info Weapon_Settings;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire_Logic") bool Weapon_Fire;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire_Logic") bool Weapon_Reloading;
 protected:
 	// Functions
 	virtual void BeginPlay() override;
-
-private:
 };
 //-------------------------------------------------------------------------------------------------------------

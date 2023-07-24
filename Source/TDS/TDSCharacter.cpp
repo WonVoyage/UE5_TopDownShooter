@@ -46,13 +46,24 @@ void ATDSCharacter::Tick(float DeltaSeconds)
 void ATDSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	Weapon_Init();
+	Init_Weapon(Init_Weapon_Name);
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Weapon_Init()
+void ATDSCharacter::Init_Weapon(FName id_weapon)
 {
 	if (!Weapon_Class)
 		return;
+
+	UGame_Instance *game_instance = Cast<UGame_Instance>(GetGameInstance());
+	if (!game_instance)
+		return;
+
+	FWeapon_Info weapon_info;
+	if(!game_instance->Get_Weapon_Info_By_Name(id_weapon, weapon_info))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Init_Weapon - weapon not found in table - NULL"));
+		return;
+	}
 
 	FVector spawn_location;
 	FRotator spawn_rotation;
@@ -64,11 +75,16 @@ void ATDSCharacter::Weapon_Init()
 	spawn_params.Owner = GetOwner();
 	spawn_params.Instigator = GetInstigator();
 
-	if (AWeapon_Default *weapon = Cast<AWeapon_Default>(GetWorld()->SpawnActor(Weapon_Class, &spawn_location, &spawn_rotation, spawn_params)))
+	if (AWeapon_Default *weapon = Cast<AWeapon_Default>(GetWorld()->SpawnActor(weapon_info.Weapon_Class, &spawn_location, &spawn_rotation, spawn_params)))
 	{
 		FAttachmentTransformRules rule(EAttachmentRule::SnapToTarget, false);
+
 		weapon->AttachToComponent(GetMesh(), rule, FName("Weapon_Socket_Right_Hand"));
+
 		Curr_Weapon = weapon;
+
+		weapon->Weapon_Settings = weapon_info;
+		weapon->Update_State_Weapon(Movement_State);
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
@@ -130,6 +146,9 @@ void ATDSCharacter::Change_Movement_State()
 	}
 
 	Update();
+
+	if (AWeapon_Default *weapon = Get_Weapon())
+		weapon->Update_State_Weapon(Movement_State);
 }
 //-------------------------------------------------------------------------------------------------------------
 AWeapon_Default *ATDSCharacter::Get_Weapon()
