@@ -27,9 +27,12 @@ public:
 
 	UFUNCTION(BlueprintCallable) void Update();
 	UFUNCTION(BlueprintCallable) void Change_Movement_State();
+	UFUNCTION() void Weapon_Reload_Start(UAnimMontage *anim);
+	UFUNCTION() void Weapon_Reload_End();
+	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_Start(UAnimMontage *anim);
+	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_End();
 	UFUNCTION(BlueprintCallable) static AWeapon_Default *Get_Weapon();
 	UFUNCTION(BlueprintCallable) ATDSCharacter *Get_Character();
-
 
 	// Variables
 	static AWeapon_Default *Curr_Weapon;

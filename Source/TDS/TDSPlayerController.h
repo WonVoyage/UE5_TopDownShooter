@@ -26,6 +26,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* SetDestinationTouchAction;	// Jump Input Action 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* Move_Action;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* Attack_Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* Reload_Action;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") float ShortPressThreshold;	// Time Threshold to know if it was a short press
 
 protected:
@@ -39,6 +40,7 @@ protected:
 	void OnSetDestinationReleased();
 	void Move(const FInputActionValue& Value);
 	void Attack_Pressed();
+	void Try_Reload_Weapon();
 
 	// Variables
 	uint32 bMoveToMouseCursor : 1;	//* True if the controlled character should navigate to the mouse cursor

@@ -85,6 +85,9 @@ void ATDSCharacter::Init_Weapon(FName id_weapon)
 
 		weapon->Weapon_Settings = weapon_info;
 		weapon->Update_State_Weapon(Movement_State);
+		weapon->Weapon_Info.Round = weapon->Weapon_Settings.Max_Round;
+		weapon->On_Weapon_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
+		weapon->On_Weapon_Reload_End.AddDynamic(this, &ATDSCharacter::Weapon_Reload_End);
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
@@ -149,6 +152,26 @@ void ATDSCharacter::Change_Movement_State()
 
 	if (AWeapon_Default *weapon = Get_Weapon())
 		weapon->Update_State_Weapon(Movement_State);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)
+{
+	BP_Weapon_Reload_Start_Implementation(anim);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Weapon_Reload_End()
+{
+	BP_Weapon_Reload_End_Implementation();
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)
+{
+	// in bp
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::BP_Weapon_Reload_End_Implementation()
+{
+	// in bp
 }
 //-------------------------------------------------------------------------------------------------------------
 AWeapon_Default *ATDSCharacter::Get_Weapon()

@@ -2,7 +2,7 @@
 
 //-------------------------------------------------------------------------------------------------------------
 AWeapon_Default::AWeapon_Default()
-:  Fire_Time(0), Scene_Component(0), Skeletal_Mesh_Weapon(0), Static_Mesh_Weapon(0), Shoot_Location(0), Weapon_Fire(false)
+:  Shoot_End_Location(FVector(ForceInitToZero)), Fire_Timer(0.0), Reload_Timer(0.0), Scene_Component(0), Skeletal_Mesh_Weapon(0), Static_Mesh_Weapon(0), Shoot_Location(0), Weapon_Fire(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -26,7 +26,19 @@ AWeapon_Default::AWeapon_Default()
 void AWeapon_Default::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	Reload_Tick(DeltaTime);
 	Fire_Tick(DeltaTime);
+}
+//-------------------------------------------------------------------------------------------------------------
+void AWeapon_Default::Reload_Tick(float delta_time)
+{
+	if (!Reloading)
+		return;
+
+	if (Reload_Timer < 0.0)
+		Finish_Reload();
+	else
+		Reload_Timer -= delta_time;
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Fire_Tick(float delta_time)
@@ -34,10 +46,19 @@ void AWeapon_Default::Fire_Tick(float delta_time)
 	if (!Weapon_Fire)
 		return;
 
-	if (Fire_Time < 0.0)
-		Fire();
+	if (Get_Weapon_Round())
+	{
+		if (Fire_Timer < 0.0)
+		{
+			if (!Reloading)
+				Fire();
+		}
+		else
+			Fire_Timer -= delta_time;
+	}
 	else
-		Fire_Time -= delta_time;
+		if (!Reloading)
+			Init_Reload();
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Fire()
@@ -48,32 +69,51 @@ void AWeapon_Default::Fire()
 	FVector spawn_location;
 	FRotator spawn_rotation;
 	FActorSpawnParameters spawn_params;
+	int i;
+	int projectile_count;
 
 	spawn_location = Shoot_Location->GetComponentLocation();
 	spawn_rotation = Shoot_Location->GetComponentRotation();
 	spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	spawn_params.Owner = GetOwner();
 	spawn_params.Instigator = GetInstigator();
-	Fire_Time = Weapon_Settings.Rate_Of_Fire;
+	projectile_count = Get_Number_Projectile_By_Shot();
+	Fire_Timer = Weapon_Settings.Rate_Of_Fire;
 
-	if(AProjectile_Default *projectile = Cast<AProjectile_Default>(GetWorld()->SpawnActor(Weapon_Settings.Projectile_Settings.Projectile, &spawn_location, &spawn_rotation, spawn_params)))
-		projectile->InitialLifeSpan = 20.0;
+	for (i = 0; i < projectile_count; i++)
+		if(AProjectile_Default *projectile = Cast<AProjectile_Default>(GetWorld()->SpawnActor(Weapon_Settings.Projectile_Settings.Projectile, &spawn_location, &spawn_rotation, spawn_params)))
+			projectile->InitialLifeSpan = 20.0;
+
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), Weapon_Settings.Sound_Fire, Shoot_Location->GetComponentLocation());
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Weapon_Settings.Effect_Fire, Shoot_Location->GetComponentLocation());
+
+	Weapon_Info.Round--; 
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Weapon_Init();
+	Init_Weapon();
 }
 //-------------------------------------------------------------------------------------------------------------
-void AWeapon_Default::Weapon_Init()
+void AWeapon_Default::Init_Weapon()
 {
 	if (Skeletal_Mesh_Weapon && !Skeletal_Mesh_Weapon->SkeletalMesh)
 		Skeletal_Mesh_Weapon->DestroyComponent(true);
 
 	if (Static_Mesh_Weapon && Static_Mesh_Weapon->GetStaticMesh())
 		Static_Mesh_Weapon->DestroyComponent(true);
+}
+//-------------------------------------------------------------------------------------------------------------
+void AWeapon_Default::Init_Reload()
+{
+	Reloading = true;
+	Reload_Timer = Weapon_Settings.Reload_Time;
+
+	// Add Animation
+	if(Weapon_Settings.Animation_Character_Reload)
+		On_Weapon_Reload_End.Broadcast();
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Set_Weapon_State_Fire(bool is_fire)
@@ -86,16 +126,27 @@ void AWeapon_Default::Set_Weapon_State_Fire(bool is_fire)
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Update_State_Weapon(EMovement_State movement_state)
 {
-	Change_Dispersion();
+
 }
 //-------------------------------------------------------------------------------------------------------------
-void AWeapon_Default::Change_Dispersion()
+void AWeapon_Default::Finish_Reload()
 {
-
+	Reloading = false;
+	Weapon_Info.Round = Weapon_Settings.Max_Round;
 }
 //-------------------------------------------------------------------------------------------------------------
 bool AWeapon_Default::Weapon_Can_Fire()
 {
 	return true;
+}
+//-------------------------------------------------------------------------------------------------------------
+int AWeapon_Default::Get_Weapon_Round()
+{
+	return Weapon_Info.Round;
+}
+//-------------------------------------------------------------------------------------------------------------
+int AWeapon_Default::Get_Number_Projectile_By_Shot()
+{
+	return Weapon_Settings.Projectile_By_Shot;
 }
 //-------------------------------------------------------------------------------------------------------------

@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "My_Types.h"
 #include "Weapon_Default.h"
 #include "Game_Instance.generated.h"
 

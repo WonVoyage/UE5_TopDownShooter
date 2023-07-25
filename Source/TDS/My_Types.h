@@ -59,7 +59,6 @@ struct FWeapon_Info : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class") TSubclassOf<class AWeapon_Default> Weapon_Class = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dispersion") FWeapon_Dispersion Weapon_Dispersion;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile") FProjectile_Info Projectile_Settings;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound") USoundBase *Sound_Fire = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound") USoundBase *Sound_Reload = 0;
@@ -74,7 +73,7 @@ struct FWeapon_Info : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") float Rate_Of_Fire = 0.5;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") float Reload_Time = 2.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") int Max_Round = 10;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") int Projectile_By_Shot = 1;
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
