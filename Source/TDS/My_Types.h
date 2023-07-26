@@ -25,7 +25,6 @@ struct FCharacter_Speed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") float Walk = 200.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") float Run = 600.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") float Sprint = 800.0;
-
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
@@ -34,12 +33,17 @@ struct FProjectile_Info
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") TSubclassOf<class AProjectile_Default> Projectile = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") USoundBase *Hit_Sound = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") USoundBase *Explose_Sound = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") UParticleSystem *Explose_FX = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") TMap<TEnumAsByte<EPhysicalSurface>, UMaterialInterface*> Hit_Decal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") TMap<TEnumAsByte<EPhysicalSurface>, UParticleSystem  *> Hit_FXs;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") float Explose_Max_Damage = 40.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") float Damage = 20.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") float Life_Time = 20.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") float Init_Speed = 2000.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") float Max_Radius_Damage = 200.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") bool Is_Like_Bomp = false;
-
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)

@@ -40,6 +40,7 @@ protected:
 	void OnSetDestinationReleased();
 	void Move(const FInputActionValue& Value);
 	void Attack_Pressed();
+	void Attack_Released();
 	void Try_Reload_Weapon();
 
 	// Variables

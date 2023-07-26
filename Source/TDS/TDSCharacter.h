@@ -17,7 +17,6 @@ class ATDSCharacter : public ACharacter
 
 public:
 	// Functions
-
 	ATDSCharacter();
 
 	virtual void Tick(float DeltaSeconds) override;

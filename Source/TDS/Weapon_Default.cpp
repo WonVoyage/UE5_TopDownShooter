@@ -48,7 +48,7 @@ void AWeapon_Default::Fire_Tick(float delta_time)
 
 	if (Get_Weapon_Round())
 	{
-		if (Fire_Timer < 0.0)
+		if (Fire_Timer <= 0.0)
 		{
 			if (!Reloading)
 				Fire();
@@ -82,7 +82,7 @@ void AWeapon_Default::Fire()
 
 	for (i = 0; i < projectile_count; i++)
 		if(AProjectile_Default *projectile = Cast<AProjectile_Default>(GetWorld()->SpawnActor(Weapon_Settings.Projectile_Settings.Projectile, &spawn_location, &spawn_rotation, spawn_params)))
-			projectile->InitialLifeSpan = 20.0;
+			projectile->Init(Weapon_Settings.Projectile_Settings);
 
 	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), Weapon_Settings.Sound_Fire, Shoot_Location->GetComponentLocation());
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Weapon_Settings.Effect_Fire, Shoot_Location->GetComponentLocation());
@@ -113,7 +113,7 @@ void AWeapon_Default::Init_Reload()
 
 	// Add Animation
 	if(Weapon_Settings.Animation_Character_Reload)
-		On_Weapon_Reload_End.Broadcast();
+		On_Weapon_Reload_Start.Broadcast(Weapon_Settings.Animation_Character_Reload);
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Set_Weapon_State_Fire(bool is_fire)
@@ -133,6 +133,8 @@ void AWeapon_Default::Finish_Reload()
 {
 	Reloading = false;
 	Weapon_Info.Round = Weapon_Settings.Max_Round;
+
+	On_Weapon_Reload_End.Broadcast();
 }
 //-------------------------------------------------------------------------------------------------------------
 bool AWeapon_Default::Weapon_Can_Fire()

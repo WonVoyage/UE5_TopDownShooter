@@ -156,12 +156,12 @@ void ATDSCharacter::Change_Movement_State()
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)
 {
-	BP_Weapon_Reload_Start_Implementation(anim);
+	BP_Weapon_Reload_Start(anim);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Weapon_Reload_End()
 {
-	BP_Weapon_Reload_End_Implementation();
+	BP_Weapon_Reload_End();
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)

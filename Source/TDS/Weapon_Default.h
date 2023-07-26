@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/ArrowComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Projectile_Default.h"
 #include "Weapon_Default.generated.h"
 
@@ -23,7 +22,7 @@ public:
 	
 	void Reload_Tick(float delta_time);
 	void Fire_Tick(float delta_time);
-	void Fire();
+	UFUNCTION(BlueprintCallable) void Fire();
 	void Init_Weapon();
 	void Init_Reload();
 	void Set_Weapon_State_Fire(bool is_fire);
@@ -46,7 +45,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") UStaticMeshComponent *Static_Mesh_Weapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") UArrowComponent *Shoot_Location;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Info") FAdditional_Weapon_Info Weapon_Info;
-	UPROPERTY() FWeapon_Info Weapon_Settings;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Info") FWeapon_Info Weapon_Settings;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Reload_Logic")float Reload_Timer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Reload_Logic") bool Reloading;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Fire_Logic")float Fire_Timer;

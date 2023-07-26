@@ -36,6 +36,7 @@ void ATDSPlayerController::SetupInputComponent()
 		enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &ATDSPlayerController::OnSetDestinationReleased);
 		//enhanced_input_component->BindAction(Scroll_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Scroll);
 		enhanced_input_component->BindAction(Attack_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Attack_Pressed);
+		enhanced_input_component->BindAction(Attack_Action, ETriggerEvent::Completed, this, &ATDSPlayerController::Attack_Released);
 		enhanced_input_component->BindAction(Reload_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Try_Reload_Weapon);
 			
 		//Setup keyboard input events
@@ -112,6 +113,18 @@ void ATDSPlayerController::Attack_Pressed()
 		weapon->Set_Weapon_State_Fire(true);
 	else
 		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Attack_Pressed - Curr_Weapon - NULL"));
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSPlayerController::Attack_Released()
+{
+	AWeapon_Default *weapon;
+	weapon = ATDSCharacter::Get_Weapon();
+
+	if (weapon != 0)
+		weapon->Set_Weapon_State_Fire(false);
+	else
+		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Attack_Pressed - Curr_Weapon - NULL"));
+
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Try_Reload_Weapon()
