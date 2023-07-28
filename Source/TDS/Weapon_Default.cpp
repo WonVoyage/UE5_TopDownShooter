@@ -2,7 +2,7 @@
 
 //-------------------------------------------------------------------------------------------------------------
 AWeapon_Default::AWeapon_Default()
-:  Shoot_End_Location(FVector(ForceInitToZero)), Fire_Timer(0.0), Reload_Timer(0.0), Scene_Component(0), Skeletal_Mesh_Weapon(0), Static_Mesh_Weapon(0), Shoot_Location(0), Weapon_Fire(false)
+:  Shoot_End_Location(FVector(ForceInitToZero)), Scene_Component(0), Skeletal_Mesh_Weapon(0), Static_Mesh_Weapon(0), Shoot_Location(0), Reload_Timer(0.0),Reloading(false), Fire_Timer(0.0), Weapon_Fire(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -99,7 +99,7 @@ void AWeapon_Default::BeginPlay()
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Init_Weapon()
 {
-	if (Skeletal_Mesh_Weapon && !Skeletal_Mesh_Weapon->SkeletalMesh)
+	if (Skeletal_Mesh_Weapon && !Skeletal_Mesh_Weapon->GetSkeletalMeshAsset())
 		Skeletal_Mesh_Weapon->DestroyComponent(true);
 
 	if (Static_Mesh_Weapon && Static_Mesh_Weapon->GetStaticMesh())

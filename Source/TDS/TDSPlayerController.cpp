@@ -38,6 +38,8 @@ void ATDSPlayerController::SetupInputComponent()
 		enhanced_input_component->BindAction(Attack_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Attack_Pressed);
 		enhanced_input_component->BindAction(Attack_Action, ETriggerEvent::Completed, this, &ATDSPlayerController::Attack_Released);
 		enhanced_input_component->BindAction(Reload_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Try_Reload_Weapon);
+		//enhanced_input_component->BindAction(Switch_Next_Weapon_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Switch_Next_Weapon);
+		//enhanced_input_component->BindAction(Switch_Prev_Weapon_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Switch_Prev_Weapon);
 			
 		//Setup keyboard input events
 		enhanced_input_component->BindAction(Move_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Move);

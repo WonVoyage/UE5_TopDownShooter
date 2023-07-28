@@ -37,6 +37,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") UParticleSystemComponent *Bullet_FX;
 	
 protected:
+	// Functions
 	virtual void BeginPlay() override;
 };
 //-------------------------------------------------------------------------------------------------------------

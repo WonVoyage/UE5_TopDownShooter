@@ -4,27 +4,26 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
-
 AWeapon_Default *ATDSCharacter::Curr_Weapon = 0;
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
-	: Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false)
+: Inventory(0), Curr_Slot_Index(0),Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false)
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	// Don't rotate character to camera direction
+	// Don't rotate Character to camera direction
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
+	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate Character to moving direction
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 640.f, 0.f);
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
+	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when Character does
 	CameraBoom->TargetArmLength = 800.f;
 	CameraBoom->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
@@ -32,6 +31,13 @@ ATDSCharacter::ATDSCharacter()
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	UInventory *inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory_Component"));
+
+	if (inventory)
+		inventory->On_Switch_Weapon.AddDynamic(this, &ATDSCharacter::Init_Weapon);
+
+	Inventory = inventory;
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
@@ -46,10 +52,11 @@ void ATDSCharacter::Tick(float DeltaSeconds)
 void ATDSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	Init_Weapon(Init_Weapon_Name);
+
+	Init_Weapon(Init_Weapon_Name, Weapon_Info);
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Init_Weapon(FName id_weapon)
+void ATDSCharacter::Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info)
 {
 	if (!Weapon_Class)
 		return;
@@ -63,6 +70,12 @@ void ATDSCharacter::Init_Weapon(FName id_weapon)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Init_Weapon - weapon not found in table - NULL"));
 		return;
+	}
+
+	if (Curr_Weapon)
+	{
+		Curr_Weapon->Destroy();
+		Curr_Weapon = 0;
 	}
 
 	FVector spawn_location;
@@ -80,14 +93,16 @@ void ATDSCharacter::Init_Weapon(FName id_weapon)
 		FAttachmentTransformRules rule(EAttachmentRule::SnapToTarget, false);
 
 		weapon->AttachToComponent(GetMesh(), rule, FName("Weapon_Socket_Right_Hand"));
-
-		Curr_Weapon = weapon;
-
 		weapon->Weapon_Settings = weapon_info;
 		weapon->Update_State_Weapon(Movement_State);
 		weapon->Weapon_Info.Round = weapon->Weapon_Settings.Max_Round;
-		weapon->On_Weapon_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
+		weapon->Weapon_Info = new_weapon_additional_info;
+
+		Curr_Slot_Index = Inventory->GetWeaponIndexSlotByName(id_weapon);
+
+ 		weapon->On_Weapon_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
 		weapon->On_Weapon_Reload_End.AddDynamic(this, &ATDSCharacter::Weapon_Reload_End);
+		Curr_Weapon = weapon;
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
@@ -179,8 +194,32 @@ AWeapon_Default *ATDSCharacter::Get_Weapon()
 	return Curr_Weapon;
 }
 //-------------------------------------------------------------------------------------------------------------
-ATDSCharacter *ATDSCharacter::Get_Character()
+void ATDSCharacter::Switch_Next_Weapon()
 {
-	return this;
+	if (Curr_Weapon && Inventory->Weapon_Slot.Num() > 1)
+	{
+		//We have more then one weapon go switch
+		int old_index = Curr_Slot_Index;
+		FAdditional_Weapon_Info old_info = Curr_Weapon->Weapon_Info;
+
+		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index + 1, old_index, old_info);
+	}	
+
+	//int old_index = Inventory->Curr_Slot_Index;
+	//FAdditional_Weapon_Info old_info = Curr_Weapon->Weapon_Info;
+
+	//Inventory->Switch_Weapon_To_Index(Inventory->Curr_Slot_Index + 1, old_index, old_info);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Switch_Prev_Weapon()
+{
+	if (Curr_Weapon && Inventory->Weapon_Slot.Num() > 1)
+	{
+		//We have more then one weapon go switch
+		int old_index = Curr_Slot_Index;
+		FAdditional_Weapon_Info old_info = Curr_Weapon->Weapon_Info;
+
+		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index - 1, old_index, old_info);
+	}	
 }
 //-------------------------------------------------------------------------------------------------------------
