@@ -6,8 +6,8 @@
 #include "Projectile_Default.h"
 #include "Weapon_Default.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Weapon_Reload_Start, UAnimMontage*, Anim);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOn_Weapon_Reload_End);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Weapon_Reload_Start, UAnimMontage*, anim);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Weapon_Reload_End, bool, is_success);
 //-------------------------------------------------------------------------------------------------------------
 UCLASS()
 class TDS_API AWeapon_Default : public AActor
@@ -28,6 +28,7 @@ public:
 	void Set_Weapon_State_Fire(bool is_fire);
 	void Update_State_Weapon(EMovement_State movement_state);
 	void Finish_Reload();
+	void Cancel_Reload();
 	bool Weapon_Can_Fire();
 	int Get_Weapon_Round();
 	int Get_Number_Projectile_By_Shot();

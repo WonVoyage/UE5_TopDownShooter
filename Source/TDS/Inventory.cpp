@@ -28,7 +28,7 @@ void UInventory::Switch_Weapon_To_Index(int index_destination, int old_index, FA
 
 	while(i < Weapon_Slot.Num())
 	{
-		if (Weapon_Slot[i].Index == correct_index)
+		if (i == correct_index)
 		{
 			if(!Weapon_Slot[i].Name.IsNone())
 			{
@@ -65,7 +65,7 @@ void UInventory::Switch_Weapon_To_Index(int index_destination, int old_index, FA
 
 	//while (i < Weapon_Slot.Num())
 	//{
-	//	if (Weapon_Slot[i].Index == index_destination)
+	//	if (i == index_destination)
 	//	{
 	//		Weapon_Slot
 	//	}

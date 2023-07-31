@@ -102,6 +102,7 @@ void ATDSCharacter::Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_wea
 
  		weapon->On_Weapon_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
 		weapon->On_Weapon_Reload_End.AddDynamic(this, &ATDSCharacter::Weapon_Reload_End);
+
 		Curr_Weapon = weapon;
 	}
 }
@@ -169,22 +170,12 @@ void ATDSCharacter::Change_Movement_State()
 		weapon->Update_State_Weapon(Movement_State);
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)
-{
-	BP_Weapon_Reload_Start(anim);
-}
-//-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Weapon_Reload_End()
-{
-	BP_Weapon_Reload_End();
-}
-//-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)
 {
 	// in bp
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::BP_Weapon_Reload_End_Implementation()
+void ATDSCharacter::BP_Weapon_Reload_End_Implementation(bool is_success)
 {
 	// in bp
 }
@@ -221,5 +212,15 @@ void ATDSCharacter::Switch_Prev_Weapon()
 
 		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index - 1, old_index, old_info);
 	}	
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)
+{
+	BP_Weapon_Reload_Start(anim);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Weapon_Reload_End(bool is_success)
+{
+	BP_Weapon_Reload_End(is_success);
 }
 //-------------------------------------------------------------------------------------------------------------

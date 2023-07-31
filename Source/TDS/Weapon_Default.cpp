@@ -134,7 +134,17 @@ void AWeapon_Default::Finish_Reload()
 	Reloading = false;
 	Weapon_Info.Round = Weapon_Settings.Max_Round;
 
-	On_Weapon_Reload_End.Broadcast();
+	On_Weapon_Reload_End.Broadcast(true);
+}
+//-------------------------------------------------------------------------------------------------------------
+void AWeapon_Default::Cancel_Reload()
+{
+	Reloading = false;
+
+	if (Skeletal_Mesh_Weapon && Skeletal_Mesh_Weapon->GetAnimInstance())
+		Skeletal_Mesh_Weapon->GetAnimInstance()->StopAllMontages(0.15);
+
+	On_Weapon_Reload_End.Broadcast(false);
 }
 //-------------------------------------------------------------------------------------------------------------
 bool AWeapon_Default::Weapon_Can_Fire()

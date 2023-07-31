@@ -22,16 +22,16 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable)void Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info);
+	UFUNCTION(BlueprintCallable) void Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info);
 	UFUNCTION(BlueprintCallable) void Update();
 	UFUNCTION(BlueprintCallable) void Change_Movement_State();
-	UFUNCTION() void Weapon_Reload_Start(UAnimMontage *anim);
-	UFUNCTION() void Weapon_Reload_End();
 	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_Start(UAnimMontage *anim);
-	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_End();
+	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_End(bool is_success);
 	UFUNCTION(BlueprintCallable) static AWeapon_Default *Get_Weapon();
 	UFUNCTION(BlueprintCallable) void Switch_Next_Weapon();
 	UFUNCTION(BlueprintCallable) void Switch_Prev_Weapon();
+	UFUNCTION() void Weapon_Reload_Start(UAnimMontage *anim);
+	UFUNCTION() void Weapon_Reload_End(bool is_success);
 
 	// Variables
 	static AWeapon_Default *Curr_Weapon;
