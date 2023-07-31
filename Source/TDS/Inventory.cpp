@@ -114,7 +114,7 @@ void UInventory::Weapon_Change_Ammo(EWeapon_Type type_weapon, int ammo_taken)
 			if (Ammo_Slot[i].Cout > Ammo_Slot[i].Max_Cout)
 				Ammo_Slot[i].Cout = Ammo_Slot[i].Max_Cout;
 
-			On_Ammo_Change.Broadcast(EWeapon_Type::Rocket_Launcher, 32);
+			On_Ammo_Change.Broadcast(Ammo_Slot[i].Weapon_Type, Ammo_Slot[i].Cout);
 
 			is_find = true;
 		}
