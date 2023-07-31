@@ -105,7 +105,7 @@ struct FWeapon_Info : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") float Reload_Time = 2.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") int Max_Round = 10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") int Projectile_By_Shot = 1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") UTexture2D *Icon = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UTexture2D *Icon = 0;
 };
 //-------------------------------------------------------------------------------------------------------------
 UCLASS()
