@@ -131,10 +131,13 @@ void AWeapon_Default::Update_State_Weapon(EMovement_State movement_state)
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Finish_Reload()
 {
+	int ammo_need_take;
+
 	Reloading = false;
+	ammo_need_take = Weapon_Info.Round - Weapon_Settings.Max_Round;
 	Weapon_Info.Round = Weapon_Settings.Max_Round;
 
-	On_Weapon_Reload_End.Broadcast(true);
+	On_Weapon_Reload_End.Broadcast(true, ammo_need_take);
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Cancel_Reload()
@@ -144,7 +147,7 @@ void AWeapon_Default::Cancel_Reload()
 	if (Skeletal_Mesh_Weapon && Skeletal_Mesh_Weapon->GetAnimInstance())
 		Skeletal_Mesh_Weapon->GetAnimInstance()->StopAllMontages(0.15);
 
-	On_Weapon_Reload_End.Broadcast(false);
+	On_Weapon_Reload_End.Broadcast(false, 0);
 }
 //-------------------------------------------------------------------------------------------------------------
 bool AWeapon_Default::Weapon_Can_Fire()

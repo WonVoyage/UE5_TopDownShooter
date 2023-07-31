@@ -85,7 +85,6 @@ void UInventory::Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_In
 			{
 				Weapon_Slot[i].Info = old_info;
 				bIsFind = true;
-
 			}
 
 			i++;
@@ -96,7 +95,52 @@ void UInventory::Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_In
 	}
 	else
 		UE_LOG(LogTemp, Warning, TEXT("UTPSInventoryComponent::SetAdditionalInfoWeapon - Not Correct index Weapon - %d"), old_index);
+}
+//-------------------------------------------------------------------------------------------------------------
+void UInventory::Weapon_Change_Ammo(EWeapon_Type type_weapon, int ammo_taken)
+{
+	bool is_find;
+	int i;
 
+	is_find = false;
+	i = 0;
+
+	while (i < Ammo_Slot.Num() && !is_find)
+	{
+		if (Ammo_Slot[i].Weapon_Type == type_weapon)
+		{
+			Ammo_Slot[i].Cout += ammo_taken;
+
+			if (Ammo_Slot[i].Cout > Ammo_Slot[i].Max_Cout)
+				Ammo_Slot[i].Cout = Ammo_Slot[i].Max_Cout;
+
+			On_Ammo_Change.Broadcast(EWeapon_Type::Rocket_Launcher, 32);
+
+			is_find = true;
+		}
+
+		i++;
+	}
+}
+//-------------------------------------------------------------------------------------------------------------
+int UInventory::GetWeaponIndexSlotByName(FName IdWeaponName)
+{
+	int result = -1;
+ 	int i = 0;
+	bool bIsFind = false;
+	
+	while (i < Weapon_Slot.Num() && !bIsFind)
+	{
+		if (Weapon_Slot[i].Name == IdWeaponName)
+		{
+			bIsFind = true;
+			result = i;
+		}
+
+		i++;
+	}
+
+	return result;
 }
 //-------------------------------------------------------------------------------------------------------------
 void UInventory::BeginPlay()
@@ -130,22 +174,3 @@ void UInventory::BeginPlay()
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
-int UInventory::GetWeaponIndexSlotByName(FName IdWeaponName)
-{
-	int result = -1;
- 	int i = 0;
-	bool bIsFind = false;
-	
-	while (i < Weapon_Slot.Num() && !bIsFind)
-	{
-		if (Weapon_Slot[i].Name == IdWeaponName)
-		{
-			bIsFind = true;
-			result = i;
-		}
-
-		i++;
-	}
-
-	return result;
-}

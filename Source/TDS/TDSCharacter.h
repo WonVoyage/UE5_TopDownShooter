@@ -31,7 +31,7 @@ public:
 	UFUNCTION(BlueprintCallable) void Switch_Next_Weapon();
 	UFUNCTION(BlueprintCallable) void Switch_Prev_Weapon();
 	UFUNCTION() void Weapon_Reload_Start(UAnimMontage *anim);
-	UFUNCTION() void Weapon_Reload_End(bool is_success);
+	UFUNCTION() void Weapon_Reload_End(bool is_success, int ammo_safe);
 
 	// Variables
 	static AWeapon_Default *Curr_Weapon;

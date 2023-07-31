@@ -72,6 +72,7 @@ struct FWeapon_Slot
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") FName Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") FAdditional_Weapon_Info Info;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") int Max_Slot_Weapon = 4;
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
@@ -80,8 +81,8 @@ struct FAmmo_Slot
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") EWeapon_Type Weapon_Type;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Count = 100;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Max_Count = 300;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Cout = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Max_Cout = 300;
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
@@ -106,6 +107,7 @@ struct FWeapon_Info : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") int Max_Round = 10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") int Projectile_By_Shot = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UTexture2D *Icon = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") EWeapon_Type Type = EWeapon_Type::Rifle;
 };
 //-------------------------------------------------------------------------------------------------------------
 UCLASS()

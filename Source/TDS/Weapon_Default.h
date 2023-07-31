@@ -7,7 +7,7 @@
 #include "Weapon_Default.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Weapon_Reload_Start, UAnimMontage*, anim);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Weapon_Reload_End, bool, is_success);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn_Weapon_Reload_End, bool, is_success, int, ammo_safe);
 //-------------------------------------------------------------------------------------------------------------
 UCLASS()
 class TDS_API AWeapon_Default : public AActor

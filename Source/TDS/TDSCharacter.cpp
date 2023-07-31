@@ -219,8 +219,11 @@ void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)
 	BP_Weapon_Reload_Start(anim);
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Weapon_Reload_End(bool is_success)
+void ATDSCharacter::Weapon_Reload_End(bool is_success, int ammo_safe)
 {
+	if (Inventory && Curr_Weapon)
+		Inventory->Weapon_Change_Ammo(Curr_Weapon->Weapon_Settings.Type, ammo_safe);
+
 	BP_Weapon_Reload_End(is_success);
 }
 //-------------------------------------------------------------------------------------------------------------
