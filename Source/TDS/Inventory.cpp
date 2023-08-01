@@ -13,7 +13,14 @@ void UInventory::TickComponent(float delta_time, ELevelTick tick_type, FActorCom
 //-------------------------------------------------------------------------------------------------------------
 void UInventory::Switch_Weapon_To_Index(int index_destination, int old_index, FAdditional_Weapon_Info old_info)
 {
-	int correct_index = index_destination;
+	FName new_id_weapon;
+	FAdditional_Weapon_Info new_additional_info;
+
+	int correct_index;
+	int i;
+
+	correct_index = index_destination;
+	i = 0;
 
 	if (index_destination > Weapon_Slot.Num() - 1)
 		correct_index = 0;
@@ -21,10 +28,7 @@ void UInventory::Switch_Weapon_To_Index(int index_destination, int old_index, FA
 		if (index_destination < 0)
 			correct_index = Weapon_Slot.Num() - 1;
 
-	FName new_id_weapon;
-	FAdditional_Weapon_Info new_additional_info;
 
-	int i = 0;
 
 	while(i < Weapon_Slot.Num())
 	{
@@ -76,21 +80,25 @@ void UInventory::Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_In
 {
 	if (Weapon_Slot.IsValidIndex(old_index))
 	{
-		bool bIsFind = false;
-		int i = 0;
+		bool is_find;
+		int i;
 
-		while (i < Weapon_Slot.Num() && !bIsFind)
+		is_find = false;
+		i = 0;
+
+		while (i < Weapon_Slot.Num() && !is_find)
 		{
 			if (i == old_index)
 			{
 				Weapon_Slot[i].Info = old_info;
-				bIsFind = true;
+				is_find = true;
+				On_Weapon_Additional_Info_Change.Broadcast(old_index, old_info);
 			}
 
 			i++;
 		}
 
-		if(!bIsFind)
+		if(!is_find)
 			UE_LOG(LogTemp, Warning, TEXT("UTPSInventoryComponent::SetAdditionalInfoWeapon - Not Found Weapon with index - %d"), old_index);
 	}
 	else
@@ -125,15 +133,19 @@ void UInventory::Weapon_Change_Ammo(EWeapon_Type type_weapon, int ammo_taken)
 //-------------------------------------------------------------------------------------------------------------
 int UInventory::GetWeaponIndexSlotByName(FName IdWeaponName)
 {
-	int result = -1;
- 	int i = 0;
-	bool bIsFind = false;
+	bool is_find;
+	int result;
+ 	int i;
+
+	is_find = false;
+	result = -1;
+	i = 0;
 	
-	while (i < Weapon_Slot.Num() && !bIsFind)
+	while (i < Weapon_Slot.Num() && !is_find)
 	{
 		if (Weapon_Slot[i].Name == IdWeaponName)
 		{
-			bIsFind = true;
+			is_find = true;
 			result = i;
 		}
 
@@ -147,7 +159,9 @@ void UInventory::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (int i = 0; i < Weapon_Slot.Num(); i++)
+	int i;
+
+	for (i = 0; i < Weapon_Slot.Num(); i++)
 	{
 		UGame_Instance *my_gi = Cast<UGame_Instance>(GetWorld()->GetGameInstance());
 		if (my_gi)

@@ -19,17 +19,20 @@ public:
 	// Functions
 	ATDSCharacter();
 	
-	virtual void Tick(float DeltaSeconds) override;
-	virtual void BeginPlay() override;
+	virtual void Tick(float delta_seconds);
+	virtual void BeginPlay();
 
+	static AWeapon_Default *Get_Weapon();
+	
 	UFUNCTION(BlueprintCallable) void Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info);
 	UFUNCTION(BlueprintCallable) void Update();
 	UFUNCTION(BlueprintCallable) void Change_Movement_State();
-	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_Start(UAnimMontage *anim);
-	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_End(bool is_success);
-	UFUNCTION(BlueprintCallable) static AWeapon_Default *Get_Weapon();
 	UFUNCTION(BlueprintCallable) void Switch_Next_Weapon();
 	UFUNCTION(BlueprintCallable) void Switch_Prev_Weapon();
+	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Fire();
+	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_Start(UAnimMontage *anim);
+	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_End(bool is_success);
+	UFUNCTION() void Weapon_Fire();
 	UFUNCTION() void Weapon_Reload_Start(UAnimMontage *anim);
 	UFUNCTION() void Weapon_Reload_End(bool is_success, int ammo_safe);
 

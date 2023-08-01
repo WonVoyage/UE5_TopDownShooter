@@ -23,11 +23,11 @@ AWeapon_Default::AWeapon_Default()
 	Shoot_Location->SetupAttachment(RootComponent);
 }
 //-------------------------------------------------------------------------------------------------------------
-void AWeapon_Default::Tick(float DeltaTime)
+void AWeapon_Default::Tick(float delta_time)
 {
-	Super::Tick(DeltaTime);
-	Reload_Tick(DeltaTime);
-	Fire_Tick(DeltaTime);
+	Super::Tick(delta_time);
+	Reload_Tick(delta_time);
+	Fire_Tick(delta_time);
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Reload_Tick(float delta_time)
@@ -87,7 +87,8 @@ void AWeapon_Default::Fire()
 	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), Weapon_Settings.Sound_Fire, Shoot_Location->GetComponentLocation());
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), Weapon_Settings.Effect_Fire, Shoot_Location->GetComponentLocation());
 
-	Weapon_Info.Round--; 
+	Weapon_Info.Round--;
+	On_Weapon_Fire.Broadcast();
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::BeginPlay()

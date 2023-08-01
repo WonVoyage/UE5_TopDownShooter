@@ -7,7 +7,7 @@
 AWeapon_Default *ATDSCharacter::Curr_Weapon = 0;
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
-: Inventory(0), Curr_Slot_Index(0),Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false)
+:  Curr_Slot_Index(0), Inventory(0), Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false)
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -56,6 +56,11 @@ void ATDSCharacter::BeginPlay()
 	Init_Weapon(Init_Weapon_Name, Weapon_Info);
 }
 //-------------------------------------------------------------------------------------------------------------
+AWeapon_Default *ATDSCharacter::Get_Weapon()
+{
+	return Curr_Weapon;
+}
+//-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info)
 {
 	if (!Weapon_Class)
@@ -100,6 +105,7 @@ void ATDSCharacter::Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_wea
 
 		Curr_Slot_Index = Inventory->GetWeaponIndexSlotByName(id_weapon);
 
+		weapon->On_Weapon_Fire.AddDynamic(this, &ATDSCharacter::Weapon_Fire);
  		weapon->On_Weapon_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
 		weapon->On_Weapon_Reload_End.AddDynamic(this, &ATDSCharacter::Weapon_Reload_End);
 
@@ -170,28 +176,15 @@ void ATDSCharacter::Change_Movement_State()
 		weapon->Update_State_Weapon(Movement_State);
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)
-{
-	// in bp
-}
-//-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::BP_Weapon_Reload_End_Implementation(bool is_success)
-{
-	// in bp
-}
-//-------------------------------------------------------------------------------------------------------------
-AWeapon_Default *ATDSCharacter::Get_Weapon()
-{
-	return Curr_Weapon;
-}
-//-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Switch_Next_Weapon()
 {
 	if (Curr_Weapon && Inventory->Weapon_Slot.Num() > 1)
 	{
-		//We have more then one weapon go switch
-		int old_index = Curr_Slot_Index;
-		FAdditional_Weapon_Info old_info = Curr_Weapon->Weapon_Info;
+		FAdditional_Weapon_Info old_info;
+		int old_index;
+
+		old_info = Curr_Weapon->Weapon_Info;
+		old_index = Curr_Slot_Index;
 
 		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index + 1, old_index, old_info);
 	}	
@@ -206,12 +199,37 @@ void ATDSCharacter::Switch_Prev_Weapon()
 {
 	if (Curr_Weapon && Inventory->Weapon_Slot.Num() > 1)
 	{
-		//We have more then one weapon go switch
-		int old_index = Curr_Slot_Index;
-		FAdditional_Weapon_Info old_info = Curr_Weapon->Weapon_Info;
+		FAdditional_Weapon_Info old_info;
+		int old_index;
+
+		old_info = Curr_Weapon->Weapon_Info;
+		old_index = Curr_Slot_Index;
 
 		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index - 1, old_index, old_info);
-	}	
+	}
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::BP_Weapon_Fire_Implementation()
+{
+	// in bp
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)
+{
+	// in bp
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::BP_Weapon_Reload_End_Implementation(bool is_success)
+{
+	// in bp
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Weapon_Fire()
+{
+	if (Inventory && Curr_Weapon)
+		Inventory->Set_Additional_Weapon_Info(Curr_Slot_Index, Curr_Weapon->Weapon_Info);
+
+	BP_Weapon_Fire();
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)

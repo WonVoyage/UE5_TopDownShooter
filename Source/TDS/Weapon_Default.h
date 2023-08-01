@@ -6,6 +6,7 @@
 #include "Projectile_Default.h"
 #include "Weapon_Default.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOn_Weapon_Fire);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Weapon_Reload_Start, UAnimMontage*, anim);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn_Weapon_Reload_End, bool, is_success, int, ammo_safe);
 //-------------------------------------------------------------------------------------------------------------
@@ -18,7 +19,7 @@ public:
 	// Functions
 	AWeapon_Default();
 
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float delta_time);
 	
 	void Reload_Tick(float delta_time);
 	void Fire_Tick(float delta_time);
@@ -36,6 +37,7 @@ public:
 	// Variables
 	FVector Shoot_End_Location;
 
+	UPROPERTY(BlueprintAssignable) FOn_Weapon_Fire On_Weapon_Fire;
 	UPROPERTY(BlueprintAssignable) FOn_Weapon_Reload_Start On_Weapon_Reload_Start;
 	UPROPERTY(BlueprintAssignable) FOn_Weapon_Reload_End On_Weapon_Reload_End;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") USceneComponent *Scene_Component;
