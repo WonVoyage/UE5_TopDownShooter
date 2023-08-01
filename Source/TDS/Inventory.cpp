@@ -105,7 +105,7 @@ void UInventory::Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_In
 		UE_LOG(LogTemp, Warning, TEXT("UTPSInventoryComponent::SetAdditionalInfoWeapon - Not Correct index Weapon - %d"), old_index);
 }
 //-------------------------------------------------------------------------------------------------------------
-void UInventory::Weapon_Change_Ammo(EWeapon_Type type_weapon, int ammo_taken)
+void UInventory::Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken)
 {
 	bool is_find;
 	int i;
@@ -129,6 +129,11 @@ void UInventory::Weapon_Change_Ammo(EWeapon_Type type_weapon, int ammo_taken)
 
 		i++;
 	}
+}
+//-------------------------------------------------------------------------------------------------------------
+bool UInventory::Check_Ammo_For_Weapon(int index)
+{
+	return true;
 }
 //-------------------------------------------------------------------------------------------------------------
 int UInventory::GetWeaponIndexSlotByName(FName IdWeaponName)

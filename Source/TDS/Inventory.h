@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "My_Types.h"
 #include "Game_Instance.h"
 #include "Inventory.generated.h"
 
@@ -23,8 +22,8 @@ public:
 
 	void Switch_Weapon_To_Index(int index_destination, int old_index, FAdditional_Weapon_Info old_info);
 	void Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_Info old_info);
-	void Weapon_Change_Ammo(EWeapon_Type type_weapon, int ammo_taken);
-
+	void Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken);
+	bool Check_Ammo_For_Weapon(int index);
 	int GetWeaponIndexSlotByName(FName IdWeaponName);
 
 	// Variables

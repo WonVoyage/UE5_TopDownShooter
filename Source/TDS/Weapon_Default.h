@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/ArrowComponent.h"
 #include "Projectile_Default.h"
+#include "Inventory.h"
 #include "Weapon_Default.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOn_Weapon_Fire);
@@ -30,12 +31,14 @@ public:
 	void Update_State_Weapon(EMovement_State movement_state);
 	void Finish_Reload();
 	void Cancel_Reload();
+	bool Can_Weapon_Reload();
 	bool Weapon_Can_Fire();
 	int Get_Weapon_Round();
 	int Get_Number_Projectile_By_Shot();
 
 	// Variables
 	FVector Shoot_End_Location;
+	FName Curr_Weapon_Name;
 
 	UPROPERTY(BlueprintAssignable) FOn_Weapon_Fire On_Weapon_Fire;
 	UPROPERTY(BlueprintAssignable) FOn_Weapon_Reload_Start On_Weapon_Reload_Start;

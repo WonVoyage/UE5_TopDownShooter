@@ -6,7 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Game_Instance.h"
-#include "Inventory.h"
+#include "Weapon_Default.h"
 #include "TDSCharacter.generated.h"
 
 //-------------------------------------------------------------------------------------------------------------

@@ -151,6 +151,26 @@ void AWeapon_Default::Cancel_Reload()
 	On_Weapon_Reload_End.Broadcast(false, 0);
 }
 //-------------------------------------------------------------------------------------------------------------
+bool AWeapon_Default::Can_Weapon_Reload()
+{
+	bool result;
+
+	result = true;
+
+	if (!GetOwner())
+		result = false;
+
+	UInventory *inventory = Cast<UInventory>(GetOwner()->GetComponentByClass(UInventory::StaticClass()));
+
+	if (!inventory)
+		result = false;
+
+	if (!inventory->Check_Ammo_For_Weapon(inventory->GetWeaponIndexSlotByName(Curr_Weapon_Name)))
+		result = false;
+
+	return result;
+}
+//-------------------------------------------------------------------------------------------------------------
 bool AWeapon_Default::Weapon_Can_Fire()
 {
 	return true;
