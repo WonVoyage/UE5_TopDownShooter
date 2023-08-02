@@ -35,7 +35,7 @@ ATDSCharacter::ATDSCharacter()
 	UInventory *inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory_Component"));
 
 	if (inventory)
-		inventory->On_Switch_Weapon.AddDynamic(this, &ATDSCharacter::Init_Weapon);
+		inventory->On_Switch_Weapon.AddDynamic(this, &ATDSCharacter::Init);
 
 	Inventory = inventory;
 
@@ -53,7 +53,7 @@ void ATDSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Init_Weapon(Init_Weapon_Name, Weapon_Info);
+	Init(Init_Weapon_Name, Weapon_Info);
 }
 //-------------------------------------------------------------------------------------------------------------
 AWeapon_Default *ATDSCharacter::Get_Weapon()
@@ -61,7 +61,7 @@ AWeapon_Default *ATDSCharacter::Get_Weapon()
 	return Curr_Weapon;
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info)
+void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info)
 {
 	if (!Weapon_Class)
 		return;
@@ -73,7 +73,7 @@ void ATDSCharacter::Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_wea
 	FWeapon_Info weapon_info;
 	if(!game_instance->Get_Weapon_Info_By_Name(id_weapon, weapon_info))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Init_Weapon - weapon not found in table - NULL"));
+		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Init - weapon not found in table - NULL"));
 		return;
 	}
 
@@ -90,7 +90,7 @@ void ATDSCharacter::Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_wea
 	spawn_location = FVector(ForceInitToZero);
 	spawn_rotation = FRotator(ForceInitToZero);
 	spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	spawn_params.Owner = GetOwner();
+	spawn_params.Owner = this;
 	spawn_params.Instigator = GetInstigator();
 
 	if (AWeapon_Default *weapon = Cast<AWeapon_Default>(GetWorld()->SpawnActor(weapon_info.Weapon_Class, &spawn_location, &spawn_rotation, spawn_params)))
@@ -98,17 +98,16 @@ void ATDSCharacter::Init_Weapon(FName id_weapon, FAdditional_Weapon_Info new_wea
 		FAttachmentTransformRules rule(EAttachmentRule::SnapToTarget, false);
 
 		weapon->AttachToComponent(GetMesh(), rule, FName("Weapon_Socket_Right_Hand"));
-		weapon->Weapon_Settings = weapon_info;
-		weapon->Update_State_Weapon(Movement_State);
-		weapon->Weapon_Info.Round = weapon->Weapon_Settings.Max_Round;
-		weapon->Weapon_Info = new_weapon_additional_info;
-		weapon->Curr_Weapon_Name = id_weapon;
+		weapon->Settings = weapon_info;
+		weapon->Update_State(Movement_State);
+		weapon->Info.Round = weapon->Settings.Max_Round;
+		weapon->Info = new_weapon_additional_info;
 
 		Curr_Slot_Index = Inventory->GetWeaponIndexSlotByName(id_weapon);
 
-		weapon->On_Weapon_Fire.AddDynamic(this, &ATDSCharacter::Weapon_Fire);
- 		weapon->On_Weapon_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
-		weapon->On_Weapon_Reload_End.AddDynamic(this, &ATDSCharacter::Weapon_Reload_End);
+		weapon->On_Fire.AddDynamic(this, &ATDSCharacter::Weapon_Fire);
+ 		weapon->On_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
+		weapon->On_Reload_End.AddDynamic(this, &ATDSCharacter::Weapon_Reload_End);
 
 		Curr_Weapon = weapon;
 	}
@@ -174,7 +173,7 @@ void ATDSCharacter::Change_Movement_State()
 	Update();
 
 	if (AWeapon_Default *weapon = Get_Weapon())
-		weapon->Update_State_Weapon(Movement_State);
+		weapon->Update_State(Movement_State);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Switch_Next_Weapon()
@@ -184,14 +183,14 @@ void ATDSCharacter::Switch_Next_Weapon()
 		FAdditional_Weapon_Info old_info;
 		int old_index;
 
-		old_info = Curr_Weapon->Weapon_Info;
+		old_info = Curr_Weapon->Info;
 		old_index = Curr_Slot_Index;
 
 		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index + 1, old_index, old_info);
 	}	
 
 	//int old_index = Inventory->Curr_Slot_Index;
-	//FAdditional_Weapon_Info old_info = Curr_Weapon->Weapon_Info;
+	//FAdditional_Weapon_Info old_info = Curr_Weapon->Info;
 
 	//Inventory->Switch_Weapon_To_Index(Inventory->Curr_Slot_Index + 1, old_index, old_info);
 }
@@ -203,7 +202,7 @@ void ATDSCharacter::Switch_Prev_Weapon()
 		FAdditional_Weapon_Info old_info;
 		int old_index;
 
-		old_info = Curr_Weapon->Weapon_Info;
+		old_info = Curr_Weapon->Info;
 		old_index = Curr_Slot_Index;
 
 		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index - 1, old_index, old_info);
@@ -228,7 +227,7 @@ void ATDSCharacter::BP_Weapon_Reload_End_Implementation(bool is_success)
 void ATDSCharacter::Weapon_Fire()
 {
 	if (Inventory && Curr_Weapon)
-		Inventory->Set_Additional_Weapon_Info(Curr_Slot_Index, Curr_Weapon->Weapon_Info);
+		Inventory->Set_Additional_Weapon_Info(Curr_Slot_Index, Curr_Weapon->Info);
 
 	BP_Weapon_Fire();
 }
@@ -241,7 +240,7 @@ void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)
 void ATDSCharacter::Weapon_Reload_End(bool is_success, int ammo_safe)
 {
 	if (Inventory && Curr_Weapon)
-		Inventory->Ammo_Slot_Change_Value(Curr_Weapon->Weapon_Settings.Type, ammo_safe);
+		Inventory->Ammo_Slot_Change_Value(Curr_Weapon->Settings.Type, ammo_safe);
 
 	BP_Weapon_Reload_End(is_success);
 }

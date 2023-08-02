@@ -112,7 +112,7 @@ void ATDSPlayerController::Attack_Pressed()
 	weapon = ATDSCharacter::Get_Weapon();
 
 	if (weapon != 0)
-		weapon->Set_Weapon_State_Fire(true);
+		weapon->Set_State_Fire(true);
 	else
 		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Attack_Pressed - Curr_Weapon - NULL"));
 }
@@ -123,7 +123,7 @@ void ATDSPlayerController::Attack_Released()
 	weapon = ATDSCharacter::Get_Weapon();
 
 	if (weapon != 0)
-		weapon->Set_Weapon_State_Fire(false);
+		weapon->Set_State_Fire(false);
 	else
 		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Attack_Pressed - Curr_Weapon - NULL"));
 
@@ -132,7 +132,7 @@ void ATDSPlayerController::Attack_Released()
 void ATDSPlayerController::Try_Reload_Weapon()
 {
 	if (AWeapon_Default *weapon = ATDSCharacter::Get_Weapon())
-		if (weapon->Get_Weapon_Round() < weapon->Weapon_Settings.Max_Round)
+		if (weapon->Get_Round() < weapon->Settings.Max_Round && weapon->Can_Reload())
 			weapon->Init_Reload();
 }
 //-------------------------------------------------------------------------------------------------------------

@@ -131,9 +131,25 @@ void UInventory::Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
-bool UInventory::Check_Ammo_For_Weapon(int index)
+bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &avaible_ammo)
 {
-	return true;
+	int i = 0;
+
+	while (i < Ammo_Slot.Num())
+	{
+		if (Ammo_Slot[i].Weapon_Type == weapon_type)
+		{
+			if (Ammo_Slot[i].Cout > 0)
+			{
+				avaible_ammo = Ammo_Slot[i].Cout;
+				return true;
+			}
+		}
+
+		i++;
+	}
+
+	return false;
 }
 //-------------------------------------------------------------------------------------------------------------
 int UInventory::GetWeaponIndexSlotByName(FName IdWeaponName)
