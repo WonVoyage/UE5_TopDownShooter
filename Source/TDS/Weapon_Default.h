@@ -10,6 +10,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOn_Fire);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Reload_Start, UAnimMontage*, anim);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn_Reload_End, bool, is_success, int, ammo_safe);
+
 //-------------------------------------------------------------------------------------------------------------
 UCLASS()
 class TDS_API AWeapon_Default : public AActor

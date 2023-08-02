@@ -24,7 +24,7 @@ public:
 
 	static AWeapon_Default *Get_Weapon();
 	
-	UFUNCTION(BlueprintCallable) void Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info);
+	UFUNCTION(BlueprintCallable) void Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info, int new_index_weapon);
 	UFUNCTION(BlueprintCallable) void Update();
 	UFUNCTION(BlueprintCallable) void Change_Movement_State();
 	UFUNCTION(BlueprintCallable) void Switch_Next_Weapon();

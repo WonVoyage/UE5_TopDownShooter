@@ -16,8 +16,9 @@ void UInventory::Switch_Weapon_To_Index(int index_destination, int old_index, FA
 	FName new_id_weapon;
 	FAdditional_Weapon_Info new_additional_info;
 
-	int correct_index;
 	int i;
+	int correct_index;
+	int new_current_index;
 
 	correct_index = index_destination;
 	i = 0;
@@ -42,8 +43,10 @@ void UInventory::Switch_Weapon_To_Index(int index_destination, int old_index, FA
 		i++;
 	}
 
+	new_current_index = correct_index;
+
 	Set_Additional_Weapon_Info(old_index, old_info);
-	On_Switch_Weapon.Broadcast(new_id_weapon, new_additional_info);
+	On_Switch_Weapon.Broadcast(new_id_weapon, new_additional_info, new_current_index);
 
 	//if (Weapon_Slot[index_destination].Name.IsNone())
 	//	return;
@@ -143,6 +146,8 @@ bool UInventory::Get_Weapon_To_Inventory(FWeapon_Slot new_weapon)
 		if (Can_Pickup_Weapon(slot_number))
 		{
 			Weapon_Slot[slot_number] = new_weapon;
+
+			On_Update_Weapon_Slots.Broadcast(slot_number, new_weapon);
 			return true;
 		}
 
@@ -219,7 +224,7 @@ void UInventory::BeginPlay()
 	if (Weapon_Slot.IsValidIndex(0))
 	{
 		if(!Weapon_Slot[0].Name.IsNone())
-		On_Switch_Weapon.Broadcast(Weapon_Slot[0].Name, Weapon_Slot[0].Info);
+		On_Switch_Weapon.Broadcast(Weapon_Slot[0].Name, Weapon_Slot[0].Info, 0);
 	}
 }
 //-------------------------------------------------------------------------------------------------------------

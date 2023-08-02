@@ -53,7 +53,7 @@ void ATDSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Init(Init_Weapon_Name, Weapon_Info);
+	Init(Init_Weapon_Name, Weapon_Info, Curr_Slot_Index);
 }
 //-------------------------------------------------------------------------------------------------------------
 AWeapon_Default *ATDSCharacter::Get_Weapon()
@@ -61,7 +61,7 @@ AWeapon_Default *ATDSCharacter::Get_Weapon()
 	return Curr_Weapon;
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info)
+void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info, int new_index_weapon)
 {
 	if (!Weapon_Class)
 		return;
