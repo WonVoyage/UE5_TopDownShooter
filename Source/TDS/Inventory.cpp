@@ -149,6 +149,8 @@ bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &avaible_am
 		i++;
 	}
 
+	On_Ammo_Empty.Broadcast(weapon_type);
+
 	return false;
 }
 //-------------------------------------------------------------------------------------------------------------

@@ -79,7 +79,7 @@ void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_add
 
 	if (Curr_Weapon)
 	{
-		Curr_Weapon->Destroy();
+		//Curr_Weapon->Destroy();
 		Curr_Weapon = 0;
 	}
 

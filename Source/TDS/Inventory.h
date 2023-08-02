@@ -8,6 +8,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn_Switch_Weapon, FName, weapon_name, FAdditional_Weapon_Info, weapon_info);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn_Ammo_Change, EWeapon_Type, type_ammo, int, cout);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn_Weapon_Additional_Info_Change, int, index, FAdditional_Weapon_Info, info);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Ammo_Empty, EWeapon_Type, weapon_type);
 //-------------------------------------------------------------------------------------------------------------
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TDS_API UInventory : public UActorComponent
@@ -30,6 +31,7 @@ public:
 	FOn_Switch_Weapon On_Switch_Weapon;
 
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory") FOn_Ammo_Change On_Ammo_Change;
+	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory") FOn_Ammo_Empty On_Ammo_Empty;
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory") FOn_Weapon_Additional_Info_Change On_Weapon_Additional_Info_Change;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons") TArray<FWeapon_Slot> Weapon_Slot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons") TArray<FAmmo_Slot> Ammo_Slot;
