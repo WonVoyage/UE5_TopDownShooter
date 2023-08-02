@@ -46,19 +46,15 @@ void AWeapon_Default::Fire_Tick(float delta_time)
 	if (!Is_Fire)
 		return;
 
-	if (Get_Round())
+	if (Is_Fire && Get_Round() > 0 && !Reloading)
 	{
 		if (Fire_Timer <= 0.0)
 		{
-			if (!Reloading)
-				Fire();
+			Fire();
 		}
 		else
 			Fire_Timer -= delta_time;
 	}
-	else
-		if (!Reloading && Can_Reload())
-			Init_Reload();
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Fire()
@@ -89,6 +85,11 @@ void AWeapon_Default::Fire()
 
 	Info.Round--;
 	On_Fire.Broadcast();
+
+	if (Get_Round() <= 0 && !Reloading)
+		if (Can_Reload())
+			Init_Reload();
+
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::BeginPlay()
@@ -134,15 +135,24 @@ void AWeapon_Default::Finish_Reload()
 {
 	int ammo_need_take;
 	int aviable_ammo;
+	int need_to_reload;
 
+	Reloading = false;
 	aviable_ammo = Get_Aviable_Ammo_For_Reload();
 
-	if (aviable_ammo > Settings.Max_Round)
-		aviable_ammo = Settings.Max_Round;
-
 	ammo_need_take = Info.Round - aviable_ammo;
-	Reloading = false;
-	Info.Round = aviable_ammo;
+	need_to_reload = Settings.Max_Round - Info.Round;
+
+	if (need_to_reload > aviable_ammo)
+	{
+		Info.Round = aviable_ammo;
+		ammo_need_take = aviable_ammo;
+	}
+	else
+	{
+		Info.Round += need_to_reload;
+		ammo_need_take = need_to_reload;
+	}
 
 	On_Reload_End.Broadcast(true, ammo_need_take);
 }

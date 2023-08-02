@@ -9,6 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn_Switch_Weapon, FName, weapon_na
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn_Ammo_Change, EWeapon_Type, type_ammo, int, cout);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOn_Weapon_Additional_Info_Change, int, index, FAdditional_Weapon_Info, info);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Ammo_Empty, EWeapon_Type, weapon_type);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOn_Ammo_Available, EWeapon_Type, weapon_type);
 //-------------------------------------------------------------------------------------------------------------
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class TDS_API UInventory : public UActorComponent
@@ -24,7 +25,7 @@ public:
 	void Switch_Weapon_To_Index(int index_destination, int old_index, FAdditional_Weapon_Info old_info);
 	void Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_Info old_info);
 	void Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken);
-	bool Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &avaible_ammo);
+	bool Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo);
 	int GetWeaponIndexSlotByName(FName IdWeaponName);
 
 	// Variables
@@ -32,6 +33,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory") FOn_Ammo_Change On_Ammo_Change;
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory") FOn_Ammo_Empty On_Ammo_Empty;
+	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory") FOn_Ammo_Empty On_Ammo_Available;
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory") FOn_Weapon_Additional_Info_Change On_Weapon_Additional_Info_Change;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons") TArray<FWeapon_Slot> Weapon_Slot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons") TArray<FAmmo_Slot> Ammo_Slot;

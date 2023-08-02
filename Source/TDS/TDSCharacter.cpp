@@ -110,6 +110,11 @@ void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_add
 		weapon->On_Reload_End.AddDynamic(this, &ATDSCharacter::Weapon_Reload_End);
 
 		Curr_Weapon = weapon;
+
+		if (Curr_Weapon->Get_Round() <= 0 && Curr_Weapon->Can_Reload())
+			Curr_Weapon->Init_Reload();
+
+		Inventory->On_Ammo_Available.Broadcast(weapon->Settings.Type);
 	}
 }
 //-------------------------------------------------------------------------------------------------------------

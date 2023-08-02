@@ -28,8 +28,6 @@ void UInventory::Switch_Weapon_To_Index(int index_destination, int old_index, FA
 		if (index_destination < 0)
 			correct_index = Weapon_Slot.Num() - 1;
 
-
-
 	while(i < Weapon_Slot.Num())
 	{
 		if (i == correct_index)
@@ -60,7 +58,6 @@ void UInventory::Switch_Weapon_To_Index(int index_destination, int old_index, FA
 	//if (index_destination < 0)
 	//	index_destination = Weapon_Slot.Num() - 1;
 
-	//Weapon_Slot[Curr_Slot_Index].Index = index_destination;
 	//Weapon_Slot[Curr_Slot_Index].Info = Weapon_Slot[index_destination].Info;
 	//Weapon_Slot[Curr_Slot_Index] = Weapon_Slot[index_destination];
 	//new_weapon_name = Weapon_Slot[Curr_Slot_Index].Name;
@@ -117,7 +114,7 @@ void UInventory::Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken
 	{
 		if (Ammo_Slot[i].Weapon_Type == type_weapon)
 		{
-			Ammo_Slot[i].Cout += ammo_taken;
+			Ammo_Slot[i].Cout -= ammo_taken;
 
 			if (Ammo_Slot[i].Cout > Ammo_Slot[i].Max_Cout)
 				Ammo_Slot[i].Cout = Ammo_Slot[i].Max_Cout;
@@ -131,7 +128,7 @@ void UInventory::Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
-bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &avaible_ammo)
+bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo)
 {
 	int i = 0;
 
@@ -141,7 +138,7 @@ bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &avaible_am
 		{
 			if (Ammo_Slot[i].Cout > 0)
 			{
-				avaible_ammo = Ammo_Slot[i].Cout;
+				available_ammo = Ammo_Slot[i].Cout;
 				return true;
 			}
 		}
