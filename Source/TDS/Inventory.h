@@ -24,14 +24,14 @@ public:
 
 	void Switch_Weapon_To_Index(int index_destination, int old_index, FAdditional_Weapon_Info old_info);
 	void Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_Info old_info);
-	void Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken);
+	UFUNCTION(BlueprintCallable) void Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken);
 	void Save_Item_To_Inventory();
+	void Get_Weapon_To_Inventory(FWeapon_Slot weapon_slot);
 	bool Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo);
-	int GetWeaponIndexSlotByName(FName IdWeaponName);
+	int Get_Weapon_Index_Slot_By_Name(FName weapon_name);
 
-	UFUNCTION(BlueprintCallable) bool Can_Pickup_Ammo();
-	UFUNCTION(BlueprintCallable) bool Can_Pickup_Weapon();
-
+	UFUNCTION(BlueprintCallable) bool Can_Pickup_Ammo(EWeapon_Type weapon_type);
+	UFUNCTION(BlueprintCallable) bool Can_Pickup_Weapon(int &slot_number);
 
 	// Variables
 	FOn_Switch_Weapon On_Switch_Weapon;

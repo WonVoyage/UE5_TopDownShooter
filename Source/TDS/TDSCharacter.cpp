@@ -103,7 +103,7 @@ void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_add
 		weapon->Info.Round = weapon->Settings.Max_Round;
 		weapon->Info = new_weapon_additional_info;
 
-		Curr_Slot_Index = Inventory->GetWeaponIndexSlotByName(id_weapon);
+		Curr_Slot_Index = Inventory->Get_Weapon_Index_Slot_By_Name(id_weapon);
 
 		weapon->On_Fire.AddDynamic(this, &ATDSCharacter::Weapon_Fire);
  		weapon->On_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
@@ -245,7 +245,7 @@ void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)
 void ATDSCharacter::Weapon_Reload_End(bool is_success, int ammo_safe)
 {
 	if (Inventory && Curr_Weapon)
-		Inventory->Ammo_Slot_Change_Value(Curr_Weapon->Settings.Type, ammo_safe);
+		Inventory->Ammo_Slot_Change_Value(Curr_Weapon->Settings.Type, -ammo_safe);
 
 	BP_Weapon_Reload_End(is_success);
 }

@@ -133,6 +133,20 @@ void UInventory::Save_Item_To_Inventory()
 	return;
 }
 //-------------------------------------------------------------------------------------------------------------
+void UInventory::Get_Weapon_To_Inventory(FWeapon_Slot new_weapon)
+{
+	int i = 0;
+	int slot_number = -1;
+
+	while (i < Weapon_Slot.Num())
+	{
+		if (Can_Pickup_Weapon(slot_number))
+			Weapon_Slot[slot_number] = new_weapon;
+
+		i++;
+	}
+}
+//-------------------------------------------------------------------------------------------------------------
 bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo)
 {
 	int i = 0;
@@ -156,28 +170,19 @@ bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_
 	return false;
 }
 //-------------------------------------------------------------------------------------------------------------
-int UInventory::GetWeaponIndexSlotByName(FName IdWeaponName)
+int UInventory::Get_Weapon_Index_Slot_By_Name(FName weapon_name)
 {
-	bool is_find;
-	int result;
- 	int i;
-
-	is_find = false;
-	result = -1;
-	i = 0;
-	
-	while (i < Weapon_Slot.Num() && !is_find)
+	int i = 0;
+		
+	while (i < Weapon_Slot.Num())
 	{
-		if (Weapon_Slot[i].Name == IdWeaponName)
-		{
-			is_find = true;
-			result = i;
-		}
+		if (Weapon_Slot[i].Name == weapon_name)
+			return i;
 
 		i++;
 	}
 
-	return result;
+	return -1;
 }
 //-------------------------------------------------------------------------------------------------------------
 void UInventory::BeginPlay()
@@ -213,13 +218,36 @@ void UInventory::BeginPlay()
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
-bool UInventory::Can_Pickup_Ammo()
+bool UInventory::Can_Pickup_Ammo(EWeapon_Type weapon_type)
 {
-	return true;
+	int i = 0;
+
+	while (i < Ammo_Slot.Num())
+	{
+		if (Ammo_Slot[i].Weapon_Type == weapon_type)
+			return true;
+
+		i++;
+	}
+
+	return false;
 }
 //-------------------------------------------------------------------------------------------------------------
-bool UInventory::Can_Pickup_Weapon()
+bool UInventory::Can_Pickup_Weapon(int &slot_number)
 {
-	return true;
+	int i = 0;
+
+	while (i < Weapon_Slot.Num())
+	{
+		if (Weapon_Slot[i].Name.IsNone())
+		{
+			slot_number = i;
+			return true;
+		}
+
+		i++;
+	}
+
+	return false;
 }
 //-------------------------------------------------------------------------------------------------------------
