@@ -26,7 +26,7 @@ public:
 	void Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_Info old_info);
 	UFUNCTION(BlueprintCallable) void Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken);
 	void Save_Item_To_Inventory();
-	void Get_Weapon_To_Inventory(FWeapon_Slot weapon_slot);
+	UFUNCTION(BlueprintCallable) bool Get_Weapon_To_Inventory(FWeapon_Slot new_weapon);
 	bool Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo);
 	int Get_Weapon_Index_Slot_By_Name(FName weapon_name);
 
