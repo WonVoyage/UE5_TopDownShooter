@@ -25,8 +25,13 @@ public:
 	void Switch_Weapon_To_Index(int index_destination, int old_index, FAdditional_Weapon_Info old_info);
 	void Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_Info old_info);
 	void Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken);
+	void Save_Item_To_Inventory();
 	bool Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo);
 	int GetWeaponIndexSlotByName(FName IdWeaponName);
+
+	UFUNCTION(BlueprintCallable) bool Can_Pickup_Ammo();
+	UFUNCTION(BlueprintCallable) bool Can_Pickup_Weapon();
+
 
 	// Variables
 	FOn_Switch_Weapon On_Switch_Weapon;
@@ -37,7 +42,6 @@ public:
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory") FOn_Weapon_Additional_Info_Change On_Weapon_Additional_Info_Change;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons") TArray<FWeapon_Slot> Weapon_Slot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons") TArray<FAmmo_Slot> Ammo_Slot;
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons") int Curr_Slot_Index;
 
 protected:
 	// Functions

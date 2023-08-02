@@ -114,18 +114,23 @@ void UInventory::Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken
 	{
 		if (Ammo_Slot[i].Weapon_Type == type_weapon)
 		{
-			Ammo_Slot[i].Cout -= ammo_taken;
+			Ammo_Slot[i].Count -= ammo_taken;
 
-			if (Ammo_Slot[i].Cout > Ammo_Slot[i].Max_Cout)
-				Ammo_Slot[i].Cout = Ammo_Slot[i].Max_Cout;
+			if (Ammo_Slot[i].Count > Ammo_Slot[i].Max_Count)
+				Ammo_Slot[i].Count = Ammo_Slot[i].Max_Count;
 
-			On_Ammo_Change.Broadcast(Ammo_Slot[i].Weapon_Type, Ammo_Slot[i].Cout);
+			On_Ammo_Change.Broadcast(Ammo_Slot[i].Weapon_Type, Ammo_Slot[i].Count);
 
 			is_find = true;
 		}
 
 		i++;
 	}
+}
+//-------------------------------------------------------------------------------------------------------------
+void UInventory::Save_Item_To_Inventory()
+{
+	return;
 }
 //-------------------------------------------------------------------------------------------------------------
 bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo)
@@ -136,9 +141,9 @@ bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_
 	{
 		if (Ammo_Slot[i].Weapon_Type == weapon_type)
 		{
-			if (Ammo_Slot[i].Cout > 0)
+			if (Ammo_Slot[i].Count > 0)
 			{
-				available_ammo = Ammo_Slot[i].Cout;
+				available_ammo = Ammo_Slot[i].Count;
 				return true;
 			}
 		}
@@ -206,5 +211,15 @@ void UInventory::BeginPlay()
 		if(!Weapon_Slot[0].Name.IsNone())
 		On_Switch_Weapon.Broadcast(Weapon_Slot[0].Name, Weapon_Slot[0].Info);
 	}
+}
+//-------------------------------------------------------------------------------------------------------------
+bool UInventory::Can_Pickup_Ammo()
+{
+	return true;
+}
+//-------------------------------------------------------------------------------------------------------------
+bool UInventory::Can_Pickup_Weapon()
+{
+	return true;
 }
 //-------------------------------------------------------------------------------------------------------------

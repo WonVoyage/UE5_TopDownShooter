@@ -81,8 +81,8 @@ struct FAmmo_Slot
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") EWeapon_Type Weapon_Type;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Cout = 100;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Max_Cout = 300;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Count = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Max_Count = 300;
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)

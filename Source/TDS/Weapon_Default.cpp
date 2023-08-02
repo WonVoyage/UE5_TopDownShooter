@@ -89,7 +89,6 @@ void AWeapon_Default::Fire()
 	if (Get_Round() <= 0 && !Reloading)
 		if (Can_Reload())
 			Init_Reload();
-
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::BeginPlay()
