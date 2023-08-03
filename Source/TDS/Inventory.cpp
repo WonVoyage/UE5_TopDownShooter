@@ -110,9 +110,21 @@ void UInventory::Save_Item_To_Inventory(FWeapon_Slot new_slot, int index_slot, i
 	return;
 }
 //-------------------------------------------------------------------------------------------------------------
-void UInventory::Drop_Weapon()
+bool UInventory::Get_Drop_Item_From_Inventory(int index_slot, FDrop_Item &drop_item)
 {
-	return;
+	bool result;
+	FName drop_item_name;
+
+	result = false;
+	drop_item_name = Get_Weapon_Name_By_Slot_Index(index_slot);
+
+	if (UGame_Instance *game_instance = Cast<UGame_Instance>(GetWorld()->GetGameInstance()))
+		result = game_instance->Get_Drop_Item_Info_By_Name(drop_item_name, drop_item);
+
+	if (Weapon_Slot.IsValidIndex(index_slot))
+		drop_item.Slot.Info = Weapon_Slot[index_slot].Info;
+
+	return result;
 }
 //-------------------------------------------------------------------------------------------------------------
 bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo)
@@ -264,5 +276,13 @@ bool UInventory::Get_Weapon_To_Inventory(FWeapon_Slot new_weapon)
 	}
 
 	return false;
+}
+//-------------------------------------------------------------------------------------------------------------
+FName UInventory::Get_Weapon_Name_By_Slot_Index(int index)
+{
+	if (Weapon_Slot.IsValidIndex(index))
+		return Weapon_Slot[index].Name;
+
+	return "";
 }
 //-------------------------------------------------------------------------------------------------------------
