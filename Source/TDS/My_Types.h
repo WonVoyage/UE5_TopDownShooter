@@ -110,6 +110,16 @@ struct FWeapon_Info : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") EWeapon_Type Type = EWeapon_Type::Rifle;
 };
 //-------------------------------------------------------------------------------------------------------------
+USTRUCT(BlueprintType)
+struct FDrop_Weapon : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Weapon") UStaticMesh *Static_Mesh = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Weapon") USkeletalMesh *Skeletal_Mesh = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Weapon") FWeapon_Slot Slot;
+};
+//-------------------------------------------------------------------------------------------------------------
 UCLASS()
 class TDS_API UMy_Types : public UBlueprintFunctionLibrary 
 {

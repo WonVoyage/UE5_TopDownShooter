@@ -105,56 +105,14 @@ void UInventory::Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_In
 		UE_LOG(LogTemp, Warning, TEXT("UTPSInventoryComponent::SetAdditionalInfoWeapon - Not Correct index Weapon - %d"), old_index);
 }
 //-------------------------------------------------------------------------------------------------------------
-void UInventory::Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken)
-{
-	bool is_find;
-	int i;
-
-	is_find = false;
-	i = 0;
-
-	while (i < Ammo_Slot.Num() && !is_find)
-	{
-		if (Ammo_Slot[i].Weapon_Type == type_weapon)
-		{
-			Ammo_Slot[i].Count += ammo_taken;
-
-			if (Ammo_Slot[i].Count > Ammo_Slot[i].Max_Count)
-				Ammo_Slot[i].Count = Ammo_Slot[i].Max_Count;
-
-			On_Ammo_Change.Broadcast(Ammo_Slot[i].Weapon_Type, Ammo_Slot[i].Count);
-
-			is_find = true;
-		}
-
-		i++;
-	}
-}
-//-------------------------------------------------------------------------------------------------------------
 void UInventory::Save_Item_To_Inventory()
 {
 	return;
 }
 //-------------------------------------------------------------------------------------------------------------
-bool UInventory::Get_Weapon_To_Inventory(FWeapon_Slot new_weapon)
+void UInventory::Drop_Weapon()
 {
-	int i = 0;
-	int slot_number = -1;
-
-	while (i < Weapon_Slot.Num())
-	{
-		if (Can_Pickup_Weapon(slot_number))
-		{
-			Weapon_Slot[slot_number] = new_weapon;
-
-			On_Update_Weapon_Slots.Broadcast(slot_number, new_weapon);
-			return true;
-		}
-
-		i++;
-	}
-
-	return false;
+	return;
 }
 //-------------------------------------------------------------------------------------------------------------
 bool UInventory::Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo)
@@ -193,6 +151,32 @@ int UInventory::Get_Weapon_Index_Slot_By_Name(FName weapon_name)
 	}
 
 	return -1;
+}
+//-------------------------------------------------------------------------------------------------------------
+void UInventory::Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken)
+{
+	bool is_find;
+	int i;
+
+	is_find = false;
+	i = 0;
+
+	while (i < Ammo_Slot.Num() && !is_find)
+	{
+		if (Ammo_Slot[i].Weapon_Type == type_weapon)
+		{
+			Ammo_Slot[i].Count += ammo_taken;
+
+			if (Ammo_Slot[i].Count > Ammo_Slot[i].Max_Count)
+				Ammo_Slot[i].Count = Ammo_Slot[i].Max_Count;
+
+			On_Ammo_Change.Broadcast(Ammo_Slot[i].Weapon_Type, Ammo_Slot[i].Count);
+
+			is_find = true;
+		}
+
+		i++;
+	}
 }
 //-------------------------------------------------------------------------------------------------------------
 void UInventory::BeginPlay()
@@ -252,6 +236,27 @@ bool UInventory::Can_Pickup_Weapon(int &slot_number)
 		if (Weapon_Slot[i].Name.IsNone())
 		{
 			slot_number = i;
+			return true;
+		}
+
+		i++;
+	}
+
+	return false;
+}
+//-------------------------------------------------------------------------------------------------------------
+bool UInventory::Get_Weapon_To_Inventory(FWeapon_Slot new_weapon)
+{
+	int i = 0;
+	int slot_number = -1;
+
+	while (i < Weapon_Slot.Num())
+	{
+		if (Can_Pickup_Weapon(slot_number))
+		{
+			Weapon_Slot[slot_number] = new_weapon;
+
+			On_Update_Weapon_Slots.Broadcast(slot_number, new_weapon);
 			return true;
 		}
 
