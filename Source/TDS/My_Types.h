@@ -72,7 +72,6 @@ struct FWeapon_Slot
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") FName Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") FAdditional_Weapon_Info Info;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") int Max_Slot_Weapon = 4;
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
@@ -111,13 +110,13 @@ struct FWeapon_Info : public FTableRowBase
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
-struct FDrop_Weapon : public FTableRowBase
+struct FDrop_Item : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Weapon") UStaticMesh *Static_Mesh = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Weapon") USkeletalMesh *Skeletal_Mesh = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Weapon") FWeapon_Slot Slot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Item") UStaticMesh *Static_Mesh = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Item") USkeletalMesh *Skeletal_Mesh = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Item") FWeapon_Slot Slot;
 };
 //-------------------------------------------------------------------------------------------------------------
 UCLASS()

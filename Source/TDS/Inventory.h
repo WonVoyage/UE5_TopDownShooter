@@ -34,7 +34,7 @@ public:
 
 	void Switch_Weapon_To_Index(int index_destination, int old_index, FAdditional_Weapon_Info old_info);
 	void Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_Info old_info);
-	void Save_Item_To_Inventory();
+	void Save_Item_To_Inventory(FWeapon_Slot new_slot, int index_slot, int curr_index);
 	void Drop_Weapon();
 	bool Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo);
 	int Get_Weapon_Index_Slot_By_Name(FName weapon_name);

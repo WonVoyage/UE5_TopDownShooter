@@ -3,20 +3,33 @@
 //-------------------------------------------------------------------------------------------------------------
 bool UGame_Instance::Get_Weapon_Info_By_Name(FName name_weapon, FWeapon_Info &out_info)
 {
-	bool is_find;
+	if (!Weapon_Info_Table)
+		throw 23;
+
 	FWeapon_Info *weapon_info_row;
 
-	is_find = false;
-
-	if (!Weapon_Info_Table)
-		UE_LOG(LogTemp, Warning, TEXT("UGame_Instance::Get_Weapon_Info_By_Name - Weapon_Table - NULL"));
-
-	if(weapon_info_row = Weapon_Info_Table->FindRow<FWeapon_Info>(name_weapon, "", false))
+	if (weapon_info_row = Weapon_Info_Table->FindRow<FWeapon_Info>(name_weapon, "", false))
 	{
-		is_find = true;
 		out_info = *weapon_info_row;
+		return true;
 	}
 	
-	return is_find;
+	return false;
+}
+//-------------------------------------------------------------------------------------------------------------
+bool UGame_Instance::Get_Drop_Item_Info_By_Name(FName name_item, FDrop_Item &out_info)
+{
+	if (!Weapon_Info_Table)
+		throw 23;
+
+	FDrop_Item *drop_item_row;
+
+	if (drop_item_row = Weapon_Info_Table->FindRow<FDrop_Item>(name_item, "", false))
+	{
+		out_info = *drop_item_row;
+		return true;
+	}
+
+	return false;
 }
 //-------------------------------------------------------------------------------------------------------------

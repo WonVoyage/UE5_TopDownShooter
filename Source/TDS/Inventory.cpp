@@ -105,7 +105,7 @@ void UInventory::Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_In
 		UE_LOG(LogTemp, Warning, TEXT("UTPSInventoryComponent::SetAdditionalInfoWeapon - Not Correct index Weapon - %d"), old_index);
 }
 //-------------------------------------------------------------------------------------------------------------
-void UInventory::Save_Item_To_Inventory()
+void UInventory::Save_Item_To_Inventory(FWeapon_Slot new_slot, int index_slot, int curr_index)
 {
 	return;
 }
