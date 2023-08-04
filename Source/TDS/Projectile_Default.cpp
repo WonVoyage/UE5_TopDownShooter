@@ -69,7 +69,6 @@ void AProjectile_Default::Collision_Hit(class UPrimitiveComponent *hit_component
 	}
 
 	UGameplayStatics::ApplyDamage(other_actor, Projectile_Settings.Damage, GetInstigatorController(), this, NULL);
-
 	Impact_Projectile();	
 	//UGameplayStatics::ApplyRadialDamageWithFalloff()
 	//Apply damage cast to if char like bp? //OnAnyTakeDmage delegate

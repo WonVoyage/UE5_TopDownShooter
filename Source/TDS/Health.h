@@ -25,8 +25,9 @@ public:
 	virtual void TickComponent(float delta_time, ELevelTick tick_type, FActorComponentTickFunction *this_tick_function);
 
 
-	UFUNCTION(BlueprintCallable, Category = "Health") virtual void Receive_Damage(float damage);
-	UFUNCTION(BlueprintCallable, Category = "Health") float Get_Curent_Health();
+	UFUNCTION(BlueprintCallable, Category = "Health") virtual void Change_Health(float damage);
+	UFUNCTION(BlueprintCallable, Category = "Health") void Set_New_Health(float new_health);
+	UFUNCTION(BlueprintCallable, Category = "Health") float Get_Current_Health();
 	UFUNCTION(BlueprintNativeEvent) void BP_Dead_Event();
 	UFUNCTION() void Dead_Event();
 
@@ -34,14 +35,11 @@ public:
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Health") FOn_Dead On_Dead;
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Health") FOn_Health_Change On_Health_Change;
 
-
-private:
-	// Variables
-	float Health;
-
 protected:
 	// Functions
 	virtual void BeginPlay();
 
+	// Variables
+	float Health;
 };
 //-------------------------------------------------------------------------------------------------------------

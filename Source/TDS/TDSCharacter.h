@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Character_Health.h"
 #include "Game_Instance.h"
 #include "Weapon_Default.h"
 #include "TDSCharacter.generated.h"
@@ -41,6 +42,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") int Curr_Slot_Index;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UInventory *Inventory;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UCharacter_Health *Health;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") EMovement_State Movement_State;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") FCharacter_Speed Movement_Info;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") bool Sprint_Run_Enabled;

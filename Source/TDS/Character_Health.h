@@ -12,6 +12,6 @@ class TDS_API UCharacter_Health : public UHealth
 
 public:
 	// Functions
-	virtual void Receive_Damage(float damage);
+	virtual void Change_Health(float damage);
 };
 //-------------------------------------------------------------------------------------------------------------

@@ -32,12 +32,10 @@ ATDSCharacter::ATDSCharacter()
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	UInventory *inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory_Component"));
+	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory_Component"));
+	Health = CreateDefaultSubobject<UCharacter_Health>(TEXT("Health"));
 
-	if (inventory)
-		inventory->On_Switch_Weapon.AddDynamic(this, &ATDSCharacter::Init);
-
-	Inventory = inventory;
+	Inventory->On_Switch_Weapon.AddDynamic(this, &ATDSCharacter::Init);
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;

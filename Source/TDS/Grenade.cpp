@@ -3,7 +3,7 @@
 
 //-------------------------------------------------------------------------------------------------------------
 AGrenade::AGrenade()
-: Timer_To_Explose(0.0), Time_To_Explose(5.0), Timer_Enabled(false)
+: Timer_To_Explose(0.0), Time_To_Explose(0.1), Timer_Enabled(false)
 {
 }
 //-------------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ void AGrenade::Timer_Explose(float delta_time)
 	if (!Timer_Enabled)
 		return;
 
-	if (Timer_To_Explose > Time_To_Explose)
+	if (Timer_To_Explose >= Time_To_Explose)
 		Explose();
 	else
 		Timer_To_Explose += delta_time;

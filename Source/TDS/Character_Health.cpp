@@ -1,8 +1,8 @@
 #include "Character_Health.h"
 
 //-------------------------------------------------------------------------------------------------------------
-void UCharacter_Health::Receive_Damage(float damage)
+void UCharacter_Health::Change_Health(float damage)
 {
-	Super::Receive_Damage(damage);
+	Super::Change_Health(damage);
 }
 //-------------------------------------------------------------------------------------------------------------

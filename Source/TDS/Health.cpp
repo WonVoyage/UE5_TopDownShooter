@@ -17,7 +17,7 @@ void UHealth::TickComponent(float delta_time, ELevelTick tick_type, FActorCompon
 	Super::TickComponent(delta_time, tick_type, this_tick_function);
 }
 //-------------------------------------------------------------------------------------------------------------
-void UHealth::Receive_Damage(float damage)
+void UHealth::Change_Health(float damage)
 {
 	Health -= damage;
 	On_Health_Change.Broadcast(Health, damage);
@@ -29,7 +29,12 @@ void UHealth::Receive_Damage(float damage)
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
-float UHealth::Get_Curent_Health()
+void UHealth::Set_New_Health(float new_health)
+{
+	Health = new_health;
+}
+//-------------------------------------------------------------------------------------------------------------
+float UHealth::Get_Current_Health()
 {
 	return Health;
 }
