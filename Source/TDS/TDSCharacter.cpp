@@ -100,10 +100,10 @@ void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_add
 		weapon->AttachToComponent(GetMesh(), rule, FName("Weapon_Socket_Right_Hand"));
 		weapon->Settings = weapon_info;
 		weapon->Update_State(Movement_State);
-		weapon->Info.Round = weapon->Settings.Max_Round;
+		//weapon->Info.Round = weapon->Settings.Max_Round;
 		weapon->Info = new_weapon_additional_info;
 
-		Curr_Slot_Index = Inventory->Get_Weapon_Index_Slot_By_Name(id_weapon);
+		Curr_Slot_Index = new_index_weapon;
 
 		weapon->On_Fire.AddDynamic(this, &ATDSCharacter::Weapon_Fire);
  		weapon->On_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);

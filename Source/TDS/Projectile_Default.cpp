@@ -57,24 +57,15 @@ void AProjectile_Default::Collision_Hit(class UPrimitiveComponent *hit_component
 			UMaterialInterface* myMaterial = Projectile_Settings.Hit_Decal[mySurfacetype];
 
 			if (myMaterial && other_component)
-			{
 				UGameplayStatics::SpawnDecalAttached(myMaterial, FVector(20.0f), other_component, NAME_None, hit.ImpactPoint, hit.ImpactNormal.Rotation(),EAttachLocation::KeepWorldPosition,10.0f);
-			}
 		}
+
 		if (Projectile_Settings.Hit_FXs.Contains(mySurfacetype))
-		{
-			UParticleSystem* myParticle = Projectile_Settings.Hit_FXs[mySurfacetype];
-			if (myParticle)
-			{
+			if (UParticleSystem* myParticle = Projectile_Settings.Hit_FXs[mySurfacetype])
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), myParticle, FTransform(hit.ImpactNormal.Rotation(), hit.ImpactPoint, FVector(1.0f)));
-			}
-		}
 
 		if (Projectile_Settings.Hit_Sound)
-		{
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), Projectile_Settings.Hit_Sound, hit.ImpactPoint);
-		}
-
 	}
 
 	UGameplayStatics::ApplyDamage(other_actor, Projectile_Settings.Damage, GetInstigatorController(), this, NULL);
