@@ -4,27 +4,26 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
-
 AWeapon_Default *ATDSCharacter::Curr_Weapon = 0;
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
-	: Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false)
+:  Curr_Slot_Index(0), Inventory(0), Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false)
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	// Don't rotate character to camera direction
+	// Don't rotate Character to camera direction
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
+	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate Character to moving direction
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 640.f, 0.f);
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when character does
+	CameraBoom->SetUsingAbsoluteRotation(true); // Don't want arm to rotate when Character does
 	CameraBoom->TargetArmLength = 800.f;
 	CameraBoom->SetRelativeRotation(FRotator(-60.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
@@ -32,6 +31,13 @@ ATDSCharacter::ATDSCharacter()
 	TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	TopDownCameraComponent->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	UInventory *inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory_Component"));
+
+	if (inventory)
+		inventory->On_Switch_Weapon.AddDynamic(this, &ATDSCharacter::Init);
+
+	Inventory = inventory;
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
@@ -46,10 +52,16 @@ void ATDSCharacter::Tick(float DeltaSeconds)
 void ATDSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	Init_Weapon(Init_Weapon_Name);
+
+	Init(Init_Weapon_Name, Weapon_Info, Curr_Slot_Index);
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Init_Weapon(FName id_weapon)
+AWeapon_Default *ATDSCharacter::Get_Weapon()
+{
+	return Curr_Weapon;
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info, int new_index_weapon)
 {
 	if (!Weapon_Class)
 		return;
@@ -61,8 +73,14 @@ void ATDSCharacter::Init_Weapon(FName id_weapon)
 	FWeapon_Info weapon_info;
 	if(!game_instance->Get_Weapon_Info_By_Name(id_weapon, weapon_info))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Init_Weapon - weapon not found in table - NULL"));
+		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Init - weapon not found in table - NULL"));
 		return;
+	}
+
+	if (Curr_Weapon)
+	{
+		//Curr_Weapon->Destroy();
+		Curr_Weapon = 0;
 	}
 
 	FVector spawn_location;
@@ -72,7 +90,7 @@ void ATDSCharacter::Init_Weapon(FName id_weapon)
 	spawn_location = FVector(ForceInitToZero);
 	spawn_rotation = FRotator(ForceInitToZero);
 	spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	spawn_params.Owner = GetOwner();
+	spawn_params.Owner = this;
 	spawn_params.Instigator = GetInstigator();
 
 	if (AWeapon_Default *weapon = Cast<AWeapon_Default>(GetWorld()->SpawnActor(weapon_info.Weapon_Class, &spawn_location, &spawn_rotation, spawn_params)))
@@ -80,14 +98,23 @@ void ATDSCharacter::Init_Weapon(FName id_weapon)
 		FAttachmentTransformRules rule(EAttachmentRule::SnapToTarget, false);
 
 		weapon->AttachToComponent(GetMesh(), rule, FName("Weapon_Socket_Right_Hand"));
+		weapon->Settings = weapon_info;
+		weapon->Update_State(Movement_State);
+		//weapon->Info.Round = weapon->Settings.Max_Round;
+		weapon->Info = new_weapon_additional_info;
+
+		Curr_Slot_Index = new_index_weapon;
+
+		weapon->On_Fire.AddDynamic(this, &ATDSCharacter::Weapon_Fire);
+ 		weapon->On_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
+		weapon->On_Reload_End.AddDynamic(this, &ATDSCharacter::Weapon_Reload_End);
 
 		Curr_Weapon = weapon;
 
-		weapon->Weapon_Settings = weapon_info;
-		weapon->Update_State_Weapon(Movement_State);
-		weapon->Weapon_Info.Round = weapon->Weapon_Settings.Max_Round;
-		weapon->On_Weapon_Reload_Start.AddDynamic(this, &ATDSCharacter::Weapon_Reload_Start);
-		weapon->On_Weapon_Reload_End.AddDynamic(this, &ATDSCharacter::Weapon_Reload_End);
+		if (Curr_Weapon->Get_Round() <= 0 && Curr_Weapon->Can_Reload())
+			Curr_Weapon->Init_Reload();
+
+		Inventory->On_Ammo_Available.Broadcast(weapon->Settings.Type);
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
@@ -151,17 +178,45 @@ void ATDSCharacter::Change_Movement_State()
 	Update();
 
 	if (AWeapon_Default *weapon = Get_Weapon())
-		weapon->Update_State_Weapon(Movement_State);
+		weapon->Update_State(Movement_State);
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)
+void ATDSCharacter::Switch_Next_Weapon()
 {
-	BP_Weapon_Reload_Start(anim);
+	if (Curr_Weapon && Inventory->Weapon_Slot.Num() > 1)
+	{
+		FAdditional_Weapon_Info old_info;
+		int old_index;
+
+		old_info = Curr_Weapon->Info;
+		old_index = Curr_Slot_Index;
+
+		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index + 1, old_index, old_info);
+	}	
+
+	//int old_index = Inventory->Curr_Slot_Index;
+	//FAdditional_Weapon_Info old_info = Curr_Weapon->Info;
+
+	//Inventory->Switch_Weapon_To_Index(Inventory->Curr_Slot_Index + 1, old_index, old_info);
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Weapon_Reload_End()
+void ATDSCharacter::Switch_Prev_Weapon()
 {
-	BP_Weapon_Reload_End();
+	if (Curr_Weapon && Inventory->Weapon_Slot.Num() > 1)
+	{
+		FAdditional_Weapon_Info old_info;
+		int old_index;
+
+		old_info = Curr_Weapon->Info;
+		old_index = Curr_Slot_Index;
+
+		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index - 1, old_index, old_info);
+	}
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::BP_Weapon_Fire_Implementation()
+{
+	// in bp
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)
@@ -169,18 +224,29 @@ void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)
 	// in bp
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::BP_Weapon_Reload_End_Implementation()
+void ATDSCharacter::BP_Weapon_Reload_End_Implementation(bool is_success)
 {
 	// in bp
 }
 //-------------------------------------------------------------------------------------------------------------
-AWeapon_Default *ATDSCharacter::Get_Weapon()
+void ATDSCharacter::Weapon_Fire()
 {
-	return Curr_Weapon;
+	if (Inventory && Curr_Weapon)
+		Inventory->Set_Additional_Weapon_Info(Curr_Slot_Index, Curr_Weapon->Info);
+
+	BP_Weapon_Fire();
 }
 //-------------------------------------------------------------------------------------------------------------
-ATDSCharacter *ATDSCharacter::Get_Character()
+void ATDSCharacter::Weapon_Reload_Start(UAnimMontage *anim)
 {
-	return this;
+	BP_Weapon_Reload_Start(anim);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Weapon_Reload_End(bool is_success, int ammo_safe)
+{
+	if (Inventory && Curr_Weapon)
+		Inventory->Ammo_Slot_Change_Value(Curr_Weapon->Settings.Type, -ammo_safe);
+
+	BP_Weapon_Reload_End(is_success);
 }
 //-------------------------------------------------------------------------------------------------------------

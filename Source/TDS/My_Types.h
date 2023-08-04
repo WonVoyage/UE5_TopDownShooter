@@ -15,6 +15,17 @@ enum class EMovement_State : uint8
 	Sprint	UMETA(Display_Name = "Sprint")
 };
 //-------------------------------------------------------------------------------------------------------------
+UENUM(BlueprintType)
+enum class EWeapon_Type : uint8
+{
+	Pistol				UMETA(Display_Name = "Aim"),
+	Rifle					UMETA(Display_Name = "Aim"),
+	Shotgun				UMETA(Display_Name = "Aim"),
+	Sniper_Rifle		UMETA(Display_Name = "Aim"),
+	Grenade_Launcher	UMETA(Display_Name = "Aim"),
+	Rocket_Launcher	UMETA(Display_Name = "Aim")
+};
+//-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
 struct FCharacter_Speed
 {
@@ -47,14 +58,30 @@ struct FProjectile_Info
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
-struct FWeapon_Dispersion
+struct FAdditional_Weapon_Info
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dispersion") float Aim_Start = 0.5;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dispersion") float Aim_Min = 0.1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dispersion") float Aim_Max = 0.5;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dispersion") float Aim_Shoot_Coef = 1.0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Stats") int Round = 10;
+};
+//-------------------------------------------------------------------------------------------------------------
+USTRUCT(BlueprintType)
+struct FWeapon_Slot
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") FName Name;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") FAdditional_Weapon_Info Info;
+};
+//-------------------------------------------------------------------------------------------------------------
+USTRUCT(BlueprintType)
+struct FAmmo_Slot
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") EWeapon_Type Weapon_Type;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Count = 100;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo_Slot") int Max_Count = 300;
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
@@ -78,14 +105,18 @@ struct FWeapon_Info : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") float Reload_Time = 2.0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") int Max_Round = 10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State") int Projectile_By_Shot = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UTexture2D *Icon = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") EWeapon_Type Type = EWeapon_Type::Rifle;
 };
 //-------------------------------------------------------------------------------------------------------------
 USTRUCT(BlueprintType)
-struct FAdditional_Weapon_Info
+struct FDrop_Item : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Stats") int Round = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Item") UStaticMesh *Static_Mesh = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Item") USkeletalMesh *Skeletal_Mesh = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop_Item") FWeapon_Slot Slot;
 };
 //-------------------------------------------------------------------------------------------------------------
 UCLASS()

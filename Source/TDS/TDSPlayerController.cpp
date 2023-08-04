@@ -30,17 +30,23 @@ void ATDSPlayerController::SetupInputComponent()
 	if (UEnhancedInputComponent *enhanced_input_component = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
 		// Setup mouse input events
-		enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &ATDSPlayerController::OnInputStarted);
-		enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &ATDSPlayerController::OnSetDestinationTriggered);
-		enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &ATDSPlayerController::OnSetDestinationReleased);
-		enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &ATDSPlayerController::OnSetDestinationReleased);
+		//enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &ATDSPlayerController::OnInputStarted);
+		//enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &ATDSPlayerController::OnSetDestinationTriggered);
+		//enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &ATDSPlayerController::OnSetDestinationReleased);
+		//enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &ATDSPlayerController::OnSetDestinationReleased);
 		//enhanced_input_component->BindAction(Scroll_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Scroll);
 		enhanced_input_component->BindAction(Attack_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Attack_Pressed);
 		enhanced_input_component->BindAction(Attack_Action, ETriggerEvent::Completed, this, &ATDSPlayerController::Attack_Released);
-		enhanced_input_component->BindAction(Reload_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Try_Reload_Weapon);
+		//enhanced_input_component->BindAction(Switch_Next_Weapon_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Switch_Next_Weapon);
+		//enhanced_input_component->BindAction(Switch_Prev_Weapon_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Switch_Prev_Weapon);
 			
 		//Setup keyboard input events
 		enhanced_input_component->BindAction(Move_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Move);
+		enhanced_input_component->BindAction(Reload_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Try_Reload_Weapon);
+		enhanced_input_component->BindAction(Change_Weapon_Slot_To_1_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Change_Weapon_Slot_To_1);
+		enhanced_input_component->BindAction(Change_Weapon_Slot_To_2_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Change_Weapon_Slot_To_2);
+		enhanced_input_component->BindAction(Change_Weapon_Slot_To_3_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Change_Weapon_Slot_To_3);
+		enhanced_input_component->BindAction(Change_Weapon_Slot_To_4_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Change_Weapon_Slot_To_4);
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
@@ -110,7 +116,7 @@ void ATDSPlayerController::Attack_Pressed()
 	weapon = ATDSCharacter::Get_Weapon();
 
 	if (weapon != 0)
-		weapon->Set_Weapon_State_Fire(true);
+		weapon->Set_State_Fire(true);
 	else
 		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Attack_Pressed - Curr_Weapon - NULL"));
 }
@@ -121,16 +127,115 @@ void ATDSPlayerController::Attack_Released()
 	weapon = ATDSCharacter::Get_Weapon();
 
 	if (weapon != 0)
-		weapon->Set_Weapon_State_Fire(false);
+		weapon->Set_State_Fire(false);
 	else
 		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Attack_Pressed - Curr_Weapon - NULL"));
-
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Try_Reload_Weapon()
 {
 	if (AWeapon_Default *weapon = ATDSCharacter::Get_Weapon())
-		if (weapon->Get_Weapon_Round() < weapon->Weapon_Settings.Max_Round)
+		if (weapon->Get_Round() < weapon->Settings.Max_Round && weapon->Can_Reload())
 			weapon->Init_Reload();
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSPlayerController::Change_Weapon_Slot_To_1()
+{
+	AWeapon_Default *weapon = ATDSCharacter::Get_Weapon();
+
+	if (!weapon)
+		throw 23;
+
+	if (!weapon->GetOwner())
+		throw 23;
+
+	UInventory *inventory = Cast<UInventory>(weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
+
+	if (!inventory)
+		throw 23;
+
+	ATDSCharacter* character;
+
+	character = Cast<ATDSCharacter>(weapon->GetOwner());
+
+	if (!character)
+		throw 23;
+
+	inventory->Switch_Weapon_To_Index(0, character->Curr_Slot_Index, weapon->Info);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSPlayerController::Change_Weapon_Slot_To_2()
+{
+	AWeapon_Default *weapon = ATDSCharacter::Get_Weapon();
+
+	if (!weapon)
+		throw 23;
+
+	if (!weapon->GetOwner())
+		throw 23;
+
+	UInventory *inventory = Cast<UInventory>(weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
+
+	if (!inventory)
+		throw 23;
+
+	ATDSCharacter* character;
+
+	character = Cast<ATDSCharacter>(weapon->GetOwner());
+
+	if (!character)
+		throw 23;
+
+	inventory->Switch_Weapon_To_Index(1, character->Curr_Slot_Index, weapon->Info);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSPlayerController::Change_Weapon_Slot_To_3()
+{
+	AWeapon_Default *weapon = ATDSCharacter::Get_Weapon();
+
+	if (!weapon)
+		throw 23;
+
+	if (!weapon->GetOwner())
+		throw 23;
+
+	UInventory *inventory = Cast<UInventory>(weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
+
+	if (!inventory)
+		throw 23;
+
+	ATDSCharacter* character;
+
+	character = Cast<ATDSCharacter>(weapon->GetOwner());
+
+	if (!character)
+		throw 23;
+
+	inventory->Switch_Weapon_To_Index(2, character->Curr_Slot_Index, weapon->Info);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSPlayerController::Change_Weapon_Slot_To_4()
+{
+	AWeapon_Default *weapon = ATDSCharacter::Get_Weapon();
+
+	if (!weapon)
+		throw 23;
+
+	if (!weapon->GetOwner())
+		throw 23;
+
+	UInventory *inventory = Cast<UInventory>(weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
+
+	if (!inventory)
+		throw 23;
+
+	ATDSCharacter* character;
+
+	character = Cast<ATDSCharacter>(weapon->GetOwner());
+
+	if (!character)
+		throw 23;
+
+	inventory->Switch_Weapon_To_Index(3, character->Curr_Slot_Index, weapon->Info);
 }
 //-------------------------------------------------------------------------------------------------------------

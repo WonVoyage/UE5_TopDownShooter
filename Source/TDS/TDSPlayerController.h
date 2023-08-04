@@ -20,17 +20,22 @@ public:
 	ATDSPlayerController();
 
 	// Variables
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UNiagaraSystem* FXCursor;	// FX Class that we will spawn when clicking
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputMappingContext* DefaultMappingContext;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* SetDestinationClickAction;	// Jump Input Action
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* SetDestinationTouchAction;	// Jump Input Action 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* Move_Action;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* Attack_Action;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction* Reload_Action;
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *SetDestinationClickAction;	// Jump Input Action
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *SetDestinationTouchAction;	// Jump Input Action 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Move_Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Attack_Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Reload_Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Change_Weapon_Slot_To_1_Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Change_Weapon_Slot_To_2_Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Change_Weapon_Slot_To_3_Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Change_Weapon_Slot_To_4_Action;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") float ShortPressThreshold;	// Time Threshold to know if it was a short press
 
 protected:
-
 	// Functions
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay();
@@ -42,9 +47,13 @@ protected:
 	void Attack_Pressed();
 	void Attack_Released();
 	void Try_Reload_Weapon();
+	void Change_Weapon_Slot_To_1();
+	void Change_Weapon_Slot_To_2();
+	void Change_Weapon_Slot_To_3();
+	void Change_Weapon_Slot_To_4();
 
 	// Variables
-	uint32 bMoveToMouseCursor : 1;	//* True if the controlled character should navigate to the mouse cursor
+	uint32 bMoveToMouseCursor : 1;	//* True if the controlled Character should navigate to the mouse cursor
 
 private:
 	// Variables
