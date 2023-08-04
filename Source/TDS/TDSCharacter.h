@@ -22,6 +22,9 @@ public:
 	
 	virtual void Tick(float delta_seconds);
 	virtual void BeginPlay();
+	virtual float TakeDamage(float damage_amount, struct FDamageEvent const& damage_event, class AController* event_instigator, AActor* damage_causer);
+
+	void Enable_Ragdoll();
 
 	static AWeapon_Default *Get_Weapon();
 	
@@ -36,10 +39,15 @@ public:
 	UFUNCTION() void Weapon_Fire();
 	UFUNCTION() void Weapon_Reload_Start(UAnimMontage *anim);
 	UFUNCTION() void Weapon_Reload_End(bool is_success, int ammo_safe);
+	UFUNCTION() void Dead();
 
 	// Variables
+	FTimerHandle Ragdoll_Timer;
+
 	static AWeapon_Default *Curr_Weapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dead") TArray<UAnimMontage*> Dead_Animations;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dead") bool Is_Alive;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") int Curr_Slot_Index;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UInventory *Inventory;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UCharacter_Health *Health;

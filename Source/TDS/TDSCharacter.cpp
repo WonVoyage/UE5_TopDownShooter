@@ -36,15 +36,16 @@ ATDSCharacter::ATDSCharacter()
 	Health = CreateDefaultSubobject<UCharacter_Health>(TEXT("Health"));
 
 	Inventory->On_Switch_Weapon.AddDynamic(this, &ATDSCharacter::Init);
+	Health->On_Dead.AddDynamic(this, &ATDSCharacter::Dead);
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSCharacter::Tick(float DeltaSeconds)
+void ATDSCharacter::Tick(float delta_seconds)
 {
-	Super::Tick(DeltaSeconds);
+	Super::Tick(delta_seconds);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::BeginPlay()
@@ -52,6 +53,27 @@ void ATDSCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	Init(Init_Weapon_Name, Weapon_Info, Curr_Slot_Index);
+}
+//-------------------------------------------------------------------------------------------------------------
+float ATDSCharacter::TakeDamage(float damage_amount, struct FDamageEvent const& damage_event, class AController* event_instigator, AActor* damage_causer)
+{
+	float actual_damage;
+
+	actual_damage = Super::TakeDamage(damage_amount, damage_event, event_instigator, damage_causer);
+	
+	if (Is_Alive)
+		Health->Change_Health(damage_amount);
+
+	return actual_damage;
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Enable_Ragdoll()
+{
+	if (!GetMesh())
+		throw 23;
+
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetSimulatePhysics(true);
 }
 //-------------------------------------------------------------------------------------------------------------
 AWeapon_Default *ATDSCharacter::Get_Weapon()
@@ -69,7 +91,7 @@ void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_add
 		return;
 
 	FWeapon_Info weapon_info;
-	if(!game_instance->Get_Weapon_Info_By_Name(id_weapon, weapon_info))
+	if (!game_instance->Get_Weapon_Info_By_Name(id_weapon, weapon_info))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Init - weapon not found in table - NULL"));
 		return;
@@ -153,23 +175,24 @@ void ATDSCharacter::Update()
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Change_Movement_State()
 {
-	if(!Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled)
+	if (!Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled)
 		Movement_State = EMovement_State::Run;
 	else
 	{
-		if(Sprint_Run_Enabled)
+		if (Sprint_Run_Enabled)
 		{
 			Walk_Enabled = false;
 			Aim_Enabled = false;
 			Movement_State = EMovement_State::Sprint;
 		}
-		if(Walk_Enabled && !Sprint_Run_Enabled && Aim_Enabled)
+
+		if (Walk_Enabled && !Sprint_Run_Enabled && Aim_Enabled)
 			Movement_State = EMovement_State::Aim_Walk;
 		else
-			if(Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled)
+			if (Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled)
 				Movement_State = EMovement_State::Walk;
 			else
-				if(!Walk_Enabled && !Sprint_Run_Enabled && Aim_Enabled)
+				if (!Walk_Enabled && !Sprint_Run_Enabled && Aim_Enabled)
 					Movement_State = EMovement_State::Aim;
 	}
 
@@ -214,17 +237,17 @@ void ATDSCharacter::Switch_Prev_Weapon()
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::BP_Weapon_Fire_Implementation()
 {
-	// in bp
+	// In BP
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)
 {
-	// in bp
+	// In BP
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::BP_Weapon_Reload_End_Implementation(bool is_success)
 {
-	// in bp
+	// In BP
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Weapon_Fire()
@@ -246,5 +269,33 @@ void ATDSCharacter::Weapon_Reload_End(bool is_success, int ammo_safe)
 		Inventory->Ammo_Slot_Change_Value(Curr_Weapon->Settings.Type, -ammo_safe);
 
 	BP_Weapon_Reload_End(is_success);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Dead()
+{
+	int rand;
+	float time_anim = 0.0;
+
+	rand = FMath::RandHelper(Dead_Animations.Num());
+
+	if (!Dead_Animations.IsValidIndex(rand))
+		throw 23;
+
+	if (!GetMesh())
+		throw 23;
+
+	if (!GetMesh()->GetAnimInstance())
+		throw 23;
+
+	time_anim = Dead_Animations[rand]->GetPlayLength();
+	GetMesh()->GetAnimInstance()->Montage_Play(Dead_Animations[rand]);
+
+	Is_Alive = false;
+
+	UnPossessed();
+
+	GetWorldTimerManager().SetTimer(Ragdoll_Timer, this, &ATDSCharacter::Enable_Ragdoll, time_anim, false);
+
+	//GetWorld()->GetAuthGameMode();
 }
 //-------------------------------------------------------------------------------------------------------------

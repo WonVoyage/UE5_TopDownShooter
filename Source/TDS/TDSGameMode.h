@@ -12,5 +12,7 @@ class ATDSGameMode : public AGameModeBase
 
 public:
 	ATDSGameMode();
+
+	void Player_Character_Dead();
 };
 //-------------------------------------------------------------------------------------------------------------

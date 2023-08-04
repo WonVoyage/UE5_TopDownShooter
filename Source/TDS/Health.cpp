@@ -22,11 +22,11 @@ void UHealth::Change_Health(float damage)
 	Health -= damage;
 	On_Health_Change.Broadcast(Health, damage);
 
+	if (Health > 100.0)
+		Health = 100.0;
+
 	if (Health <= 0.0)
-	{
 		On_Dead.Broadcast();
-		Dead_Event();
-	}
 }
 //-------------------------------------------------------------------------------------------------------------
 void UHealth::Set_New_Health(float new_health)
@@ -42,10 +42,5 @@ float UHealth::Get_Current_Health()
 void UHealth::BP_Dead_Event_Implementation()
 {
 	// In BP
-}
-//-------------------------------------------------------------------------------------------------------------
-void UHealth::Dead_Event()
-{
-	BP_Dead_Event();
 }
 //-------------------------------------------------------------------------------------------------------------

@@ -29,7 +29,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Health") void Set_New_Health(float new_health);
 	UFUNCTION(BlueprintCallable, Category = "Health") float Get_Current_Health();
 	UFUNCTION(BlueprintNativeEvent) void BP_Dead_Event();
-	UFUNCTION() void Dead_Event();
 
 	// Variables
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Health") FOn_Dead On_Dead;
