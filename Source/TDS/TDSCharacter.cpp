@@ -62,7 +62,7 @@ float ATDSCharacter::TakeDamage(float damage_amount, struct FDamageEvent const& 
 	actual_damage = Super::TakeDamage(damage_amount, damage_event, event_instigator, damage_causer);
 	
 	if (Is_Alive)
-		Health->Change_Health(damage_amount);
+		Health->Change_Health(damage_amount * -1.0);
 
 	return actual_damage;
 }
