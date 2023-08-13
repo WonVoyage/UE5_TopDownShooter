@@ -23,7 +23,7 @@ public:
 	virtual void Tick(float delta_time);
 	
 	void Reload_Tick(float delta_time);
-	void Fire_Tick(float delta_time);
+	//void Fire_Tick(float delta_time);
 	void Fire();
 	void Init();
 	void Init_Reload();

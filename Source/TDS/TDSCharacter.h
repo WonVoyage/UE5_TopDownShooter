@@ -25,6 +25,7 @@ public:
 	//virtual float TakeDamage(float damage_amount, struct FDamageEvent const& damage_event, class AController* event_instigator, AActor* damage_causer);
 
 	void Enable_Ragdoll();
+	void Fire_Tick(float delta_time);
 
 	static AWeapon_Default *Get_Weapon();
 	
@@ -45,9 +46,9 @@ public:
 	// Variables
 	FTimerHandle Ragdoll_Timer;
 
-	bool Is_Alive;
 	static AWeapon_Default *Curr_Weapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lives") bool Is_Alive;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lives") int Lives;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dead") TArray<UAnimMontage*> Dead_Animations;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") int Curr_Slot_Index;

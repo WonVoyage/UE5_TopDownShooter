@@ -46,6 +46,7 @@ ATDSCharacter::ATDSCharacter()
 void ATDSCharacter::Tick(float delta_seconds)
 {
 	Super::Tick(delta_seconds);
+	Fire_Tick(delta_seconds);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::BeginPlay()
@@ -76,6 +77,29 @@ void ATDSCharacter::Enable_Ragdoll()
 	GetMesh()->SetSimulatePhysics(true);
 }
 //-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Fire_Tick(float delta_seconds)
+{
+	if (!Curr_Weapon)
+		return;
+
+	if (!Curr_Weapon->Is_Fire)
+		return;
+
+	if (Curr_Weapon->Reloading)
+		return;
+
+	if (!Is_Alive)
+		return;
+
+	if (Curr_Weapon->Get_Round() > 0)
+	{
+		if (Curr_Weapon->Fire_Timer <= 0.0)
+			Curr_Weapon->Fire();
+		else
+			Curr_Weapon->Fire_Timer -= delta_seconds;
+	}
+}
+//-------------------------------------------------------------------------------------------------------------
 AWeapon_Default *ATDSCharacter::Get_Weapon()
 {
 	return Curr_Weapon;
@@ -84,17 +108,17 @@ AWeapon_Default *ATDSCharacter::Get_Weapon()
 void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info, int new_index_weapon)
 {
 	if (!Weapon_Class)
-		return;
+		throw 23;
 
 	UGame_Instance *game_instance = Cast<UGame_Instance>(GetGameInstance());
 	if (!game_instance)
-		return;
+		throw 23;
 
 	FWeapon_Info weapon_info;
 	if (!game_instance->Get_Weapon_Info_By_Name(id_weapon, weapon_info))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Init - weapon not found in table - NULL"));
-		return;
+		throw 23;
 	}
 
 	if (Curr_Weapon)
@@ -143,9 +167,6 @@ void ATDSCharacter::Update()
 	float result_speed;
 
 	result_speed = 600.0;
-
-	if (!Is_Alive)
-		return;
 
 	switch (Movement_State)
 	{
@@ -304,7 +325,6 @@ void ATDSCharacter::Dead()
 	Is_Alive = false;
 
 	UnPossessed();
-
 	GetWorldTimerManager().SetTimer(Ragdoll_Timer, this, &ATDSCharacter::Enable_Ragdoll, time_anim, false);
 	BP_Dead();
 

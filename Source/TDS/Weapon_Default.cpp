@@ -27,7 +27,7 @@ void AWeapon_Default::Tick(float delta_time)
 {
 	Super::Tick(delta_time);
 	Reload_Tick(delta_time);
-	Fire_Tick(delta_time);
+	//Fire_Tick(delta_time);
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Reload_Tick(float delta_time)
@@ -41,27 +41,27 @@ void AWeapon_Default::Reload_Tick(float delta_time)
 		Reload_Timer -= delta_time;
 }
 //-------------------------------------------------------------------------------------------------------------
-void AWeapon_Default::Fire_Tick(float delta_time)
-{
-	if (!Is_Fire)
-		return;
-
-	if (Is_Fire && Get_Round() > 0 && !Reloading)
-	{
-		if (Fire_Timer <= 0.0)
-		{
-			Fire();
-		}
-		else
-			Fire_Timer -= delta_time;
-	}
-}
+//void AWeapon_Default::Fire_Tick(float delta_time)
+//{
+//	if (!Is_Fire)
+//		return;
+//
+//	if (Is_Fire && Get_Round() > 0 && !Reloading)
+//	{
+//		if (Fire_Timer <= 0.0)
+//		{
+//			Fire();
+//		}
+//		else
+//			Fire_Timer -= delta_time;
+//	}
+//}
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Fire()
 {
 	if (!Shoot_Location || !Settings.Projectile_Settings.Projectile)
 		throw 23;
-	
+
 	FVector spawn_location;
 	FRotator spawn_rotation;
 	FActorSpawnParameters spawn_params;
