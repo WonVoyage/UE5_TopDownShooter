@@ -7,7 +7,7 @@
 AWeapon_Default *ATDSCharacter::Curr_Weapon = 0;
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
-:  Curr_Slot_Index(0), Inventory(0), Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false)
+:  Is_Alive(true), Curr_Slot_Index(0), Inventory(0), Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false), Lives(1)
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -55,17 +55,17 @@ void ATDSCharacter::BeginPlay()
 	Init(Init_Weapon_Name, Weapon_Info, Curr_Slot_Index);
 }
 //-------------------------------------------------------------------------------------------------------------
-float ATDSCharacter::TakeDamage(float damage_amount, struct FDamageEvent const& damage_event, class AController* event_instigator, AActor* damage_causer)
-{
-	float actual_damage;
-
-	actual_damage = Super::TakeDamage(damage_amount, damage_event, event_instigator, damage_causer);
-	
-	if (Is_Alive)
-		Health->Change_Health(damage_amount * -1.0);
-
-	return actual_damage;
-}
+//float ATDSCharacter::TakeDamage(float damage_amount, struct FDamageEvent const& damage_event, class AController* event_instigator, AActor* damage_causer)
+//{
+//	float actual_damage;
+//
+//	actual_damage = Super::TakeDamage(damage_amount, damage_event, event_instigator, damage_causer);
+//	
+//	if (Is_Alive)
+//		Health->Change_Health(damage_amount * -1.0);
+//
+//	return actual_damage;
+//}
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Enable_Ragdoll()
 {
@@ -144,6 +144,9 @@ void ATDSCharacter::Update()
 
 	result_speed = 600.0;
 
+	if (!Is_Alive)
+		return;
+
 	switch (Movement_State)
 	{
 	case EMovement_State::Aim:
@@ -175,7 +178,10 @@ void ATDSCharacter::Update()
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Change_Movement_State()
 {
-	if (!Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled)
+	if (!Is_Alive)
+		return;
+
+	if (!Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled )
 		Movement_State = EMovement_State::Run;
 	else
 	{
@@ -240,6 +246,11 @@ void ATDSCharacter::BP_Weapon_Fire_Implementation()
 	// In BP
 }
 //-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::BP_Dead_Implementation()
+{
+	// In BP
+}
+//-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)
 {
 	// In BP
@@ -295,6 +306,7 @@ void ATDSCharacter::Dead()
 	UnPossessed();
 
 	GetWorldTimerManager().SetTimer(Ragdoll_Timer, this, &ATDSCharacter::Enable_Ragdoll, time_anim, false);
+	BP_Dead();
 
 	//GetWorld()->GetAuthGameMode();
 }

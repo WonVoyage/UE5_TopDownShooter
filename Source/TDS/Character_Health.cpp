@@ -10,14 +10,7 @@ void UCharacter_Health::Change_Health(float value)
 	value *= Coef_Damage;
 
 	if (Shield > 0.0 && value > 0.0)
-	{
 		Change_Shield(value);
-
-		if (Shield <= 0.0)
-		{
-			// FX
-		}
-	}
 	else
 		Super::Change_Health(value);
 }

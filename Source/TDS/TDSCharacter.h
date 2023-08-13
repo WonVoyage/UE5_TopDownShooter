@@ -22,7 +22,7 @@ public:
 	
 	virtual void Tick(float delta_seconds);
 	virtual void BeginPlay();
-	virtual float TakeDamage(float damage_amount, struct FDamageEvent const& damage_event, class AController* event_instigator, AActor* damage_causer);
+	//virtual float TakeDamage(float damage_amount, struct FDamageEvent const& damage_event, class AController* event_instigator, AActor* damage_causer);
 
 	void Enable_Ragdoll();
 
@@ -34,6 +34,7 @@ public:
 	UFUNCTION(BlueprintCallable) void Switch_Next_Weapon();
 	UFUNCTION(BlueprintCallable) void Switch_Prev_Weapon();
 	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Fire();
+	UFUNCTION(BlueprintNativeEvent) void BP_Dead();
 	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_Start(UAnimMontage *anim);
 	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_End(bool is_success);
 	UFUNCTION() void Weapon_Fire();
@@ -44,13 +45,14 @@ public:
 	// Variables
 	FTimerHandle Ragdoll_Timer;
 
+	bool Is_Alive;
 	static AWeapon_Default *Curr_Weapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lives") int Lives;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dead") TArray<UAnimMontage*> Dead_Animations;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dead") bool Is_Alive;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") int Curr_Slot_Index;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UInventory *Inventory;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UCharacter_Health *Health;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health") UCharacter_Health *Health;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") EMovement_State Movement_State;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") FCharacter_Speed Movement_Info;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") bool Sprint_Run_Enabled;
