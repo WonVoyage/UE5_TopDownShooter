@@ -27,6 +27,7 @@ public:
 
 	void Enable_Ragdoll();
 	void Fire_Tick(float delta_time);
+	void Drop_Weapon(int32 ByIndex, FDrop_Item &DropItemInfo);
 
 	static AWeapon_Default *Get_Weapon();
 	

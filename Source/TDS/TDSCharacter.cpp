@@ -100,6 +100,40 @@ void ATDSCharacter::Fire_Tick(float delta_seconds)
 	}
 }
 //-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Drop_Weapon(int32 ByIndex, FDrop_Item &DropItemInfo)
+{
+	FWeapon_Slot emty_weapon_slot;
+	int i = 1;
+
+	FVector spawn_location;
+	FRotator spawn_rotation;
+	FActorSpawnParameters spawn_params;
+
+	spawn_location = GetOwner()->GetActorLocation() + (GetOwner()->GetActorForwardVector() * 100.0);
+	spawn_rotation = FRotator(ForceInitToZero);
+	spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	if (Inventory->Weapon_Slot.Num() < 1)
+		throw 23;
+
+	Inventory->Get_Drop_Item_From_Inventory(ByIndex, DropItemInfo);
+
+	GetWorld()->SpawnActor(Weapon_Class, &spawn_location, &spawn_rotation, spawn_params);
+
+	//switch weapon to valid slot weapon from start weapon slots array
+	//while (i < Weapon_Slot.Num())
+	//{
+	//	if (!Weapon_Slot[i].Name.IsNone())
+	//		On_Switch_Weapon.Broadcast(Weapon_Slot[j].Name, Weapon_Slot[j].Info, j);
+
+	//	i++;
+	//}
+
+	Inventory->Weapon_Slot[ByIndex] = emty_weapon_slot;
+	//On_Update_Weapon_Slots.Broadcast(ByIndex, EmtyWeaponSlot);
+
+}
+//-------------------------------------------------------------------------------------------------------------
 AWeapon_Default *ATDSCharacter::Get_Weapon()
 {
 	return Curr_Weapon;
@@ -329,11 +363,12 @@ void ATDSCharacter::Dead()
 	if (!GetController())
 		throw 23;
 
-	GetController()->UnPossess();
-	UnPossessed();
 	GetWorldTimerManager().SetTimer(Ragdoll_Timer, this, &ATDSCharacter::Enable_Ragdoll, time_anim, false);
-	SetLifeSpan(1.0);
 	game_mode->BP_Dead();
+
+	//GetController()->UnPossess();
+	//UnPossessed();
+	//SetLifeSpan(1.0);
 
 	//GetWorld()->GetAuthGameMode();
 }
