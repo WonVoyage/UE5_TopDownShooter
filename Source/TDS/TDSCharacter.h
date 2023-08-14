@@ -8,6 +8,7 @@
 #include "Character_Health.h"
 #include "Game_Instance.h"
 #include "Weapon_Default.h"
+#include "TDSGameMode.h"
 #include "TDSCharacter.generated.h"
 
 //-------------------------------------------------------------------------------------------------------------

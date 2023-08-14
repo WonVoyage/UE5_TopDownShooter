@@ -1,6 +1,5 @@
 #include "TDSGameMode.h"
 #include "TDSPlayerController.h"
-#include "TDSCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 //-------------------------------------------------------------------------------------------------------------
@@ -20,8 +19,8 @@ ATDSGameMode::ATDSGameMode()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 }
 //-------------------------------------------------------------------------------------------------------------
-void ATDSGameMode::Player_Character_Dead()
+void ATDSGameMode::BP_Dead_Implementation()
 {
-
+	// In BP
 }
 //-------------------------------------------------------------------------------------------------------------

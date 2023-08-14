@@ -118,7 +118,7 @@ void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_add
 	if (!game_instance->Get_Weapon_Info_By_Name(id_weapon, weapon_info))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Init - weapon not found in table - NULL"));
-		throw 23;
+		return;
 	}
 
 	if (Curr_Weapon)
@@ -307,6 +307,8 @@ void ATDSCharacter::Dead()
 {
 	int rand;
 	float time_anim = 0.0;
+	ATDSGameMode* game_mode = Cast<ATDSGameMode>(GetWorld()->GetAuthGameMode());
+
 
 	rand = FMath::RandHelper(Dead_Animations.Num());
 
@@ -324,9 +326,14 @@ void ATDSCharacter::Dead()
 
 	Is_Alive = false;
 
+	if (!GetController())
+		throw 23;
+
+	GetController()->UnPossess();
 	UnPossessed();
 	GetWorldTimerManager().SetTimer(Ragdoll_Timer, this, &ATDSCharacter::Enable_Ragdoll, time_anim, false);
-	BP_Dead();
+	SetLifeSpan(1.0);
+	game_mode->BP_Dead();
 
 	//GetWorld()->GetAuthGameMode();
 }
