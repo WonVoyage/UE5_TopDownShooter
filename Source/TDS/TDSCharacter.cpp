@@ -360,8 +360,8 @@ void ATDSCharacter::Dead()
 
 	Is_Alive = false;
 
-	if (!GetController())
-		throw 23;
+	//if (!GetController())
+	//	throw 23;
 
 	GetWorldTimerManager().SetTimer(Ragdoll_Timer, this, &ATDSCharacter::Enable_Ragdoll, time_anim, false);
 	game_mode->BP_Dead();

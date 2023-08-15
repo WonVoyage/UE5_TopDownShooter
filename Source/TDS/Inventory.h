@@ -39,7 +39,7 @@ public:
 	bool Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo);
 	int Get_Weapon_Index_Slot_By_Name(FName weapon_name);
 
-	FName Get_Weapon_Name_By_Slot_Index(int index);
+	UFUNCTION(BlueprintCallable) FName Get_Weapon_Name_By_Slot_Index(int index);
 
 	UFUNCTION(BlueprintCallable) void Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken);
 	UFUNCTION(BlueprintCallable) bool Can_Pickup_Ammo(EWeapon_Type weapon_type);
