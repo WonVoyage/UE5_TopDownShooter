@@ -7,7 +7,7 @@
 AWeapon_Default *ATDSCharacter::Curr_Weapon = 0;
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
-:  Is_Alive(true), Curr_Slot_Index(0), Inventory(0), Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Walk_Enabled(false), Aim_Enabled(false), Lives(1)
+:  Is_Alive(true), Lives(1), Curr_Slot_Index(0), Inventory(0), Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Aim_Enabled(false), Walk_Enabled(false)
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 

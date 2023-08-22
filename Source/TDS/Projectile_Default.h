@@ -22,7 +22,7 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	void Init(FProjectile_Info init_param);
+	UFUNCTION(BlueprintCallable) void Init(FProjectile_Info init_param);
 	virtual void Impact_Projectile();
 
 	UFUNCTION(BlueprintCallable) virtual void Collision_Hit(class UPrimitiveComponent *hit_component, AActor *other_actor, UPrimitiveComponent *other_component, FVector normal_impulse, const FHitResult &hit);

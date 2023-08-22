@@ -22,9 +22,9 @@ public:
 	void Explose();
 
 	// Variables
-	float Timer_To_Explose;
-	float Time_To_Explose;
-	bool Timer_Enabled;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grenade") float Timer_To_Explose;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grenade") float Time_To_Explose;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grenade") bool Timer_Enabled;
 
 protected:
 	// Functions
