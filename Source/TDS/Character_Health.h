@@ -19,7 +19,7 @@ public:
 	void Change_Shield(float value);
 	void Cool_Down_Shield_End();
 	void Recovery_Shield();
-	float Get_Shield();
+	UFUNCTION(BlueprintCallable, Category = "Health") float Get_Shield();
 
 	// Variables
 	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Health") FOn_Shield_Change On_Shield_Change;
