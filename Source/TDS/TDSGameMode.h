@@ -1,12 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameMode.h"
+#include "GameFramework/GameModeBase.h"
 #include "TDSGameMode.generated.h"
 
 //-------------------------------------------------------------------------------------------------------------
 UCLASS(minimalapi)
-class ATDSGameMode : public AGameMode
+class ATDSGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
