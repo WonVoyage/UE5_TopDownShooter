@@ -30,15 +30,8 @@ void ATDSPlayerController::SetupInputComponent()
 	if (UEnhancedInputComponent *enhanced_input_component = CastChecked<UEnhancedInputComponent>(InputComponent))
 	{
 		// Setup mouse input events
-		//enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Started, this, &ATDSPlayerController::OnInputStarted);
-		//enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Triggered, this, &ATDSPlayerController::OnSetDestinationTriggered);
-		//enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Completed, this, &ATDSPlayerController::OnSetDestinationReleased);
-		//enhanced_input_component->BindAction(SetDestinationClickAction, ETriggerEvent::Canceled, this, &ATDSPlayerController::OnSetDestinationReleased);
-		//enhanced_input_component->BindAction(Scroll_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Scroll);
 		enhanced_input_component->BindAction(Attack_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Attack_Pressed);
 		enhanced_input_component->BindAction(Attack_Action, ETriggerEvent::Completed, this, &ATDSPlayerController::Attack_Released);
-		//enhanced_input_component->BindAction(Switch_Next_Weapon_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Switch_Next_Weapon);
-		//enhanced_input_component->BindAction(Switch_Prev_Weapon_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Switch_Prev_Weapon);
 			
 		//Setup keyboard input events
 		enhanced_input_component->BindAction(Move_Action, ETriggerEvent::Triggered, this, &ATDSPlayerController::Move);
@@ -95,19 +88,32 @@ void ATDSPlayerController::OnSetDestinationReleased()
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Move(const FInputActionValue& Value)
 {
-	APawn *controlled_pawn = GetPawn();
+	FVector2D movement_vector;
+	FRotator rotation;
+	FRotator yaw_rotation;
+	FRotator rotation_to_look;
+	FVector forward_direction;
+	FVector right_direction;
+	
+	ATDSCharacter* character = Cast<ATDSCharacter>(GetPawn());
 
-	if (controlled_pawn == nullptr)
+	if (character == nullptr)
 		return;
 
-	FVector2D movement_vector = Value.Get<FVector2D>(); // input is a Vector2D
-	FRotator rotation = controlled_pawn->GetControlRotation(); // find out which way is forward
-	FRotator yaw_rotation(0, rotation.Yaw, 0);
-	FVector forward_direction = FRotationMatrix(yaw_rotation).GetUnitAxis(EAxis::X); // get forward vector
-	FVector right_direction = FRotationMatrix(yaw_rotation).GetUnitAxis(EAxis::Y); // get right vector 
+	if (!IsLocalPlayerController())
+		return;
 
-	controlled_pawn->AddMovementInput(forward_direction, movement_vector.Y);
-	controlled_pawn->AddMovementInput(right_direction, movement_vector.X);
+	movement_vector = Value.Get<FVector2D>(); // input is a Vector2D
+	rotation = character->GetControlRotation(); // find out which way is forward
+	yaw_rotation = FRotator(0, rotation.Yaw, 0);
+	rotation_to_look = FVector(movement_vector.X, movement_vector.Y, 0.0).ToOrientationRotator();
+	forward_direction = FRotationMatrix(yaw_rotation).GetUnitAxis(EAxis::X); // get forward vector
+	right_direction = FRotationMatrix(yaw_rotation).GetUnitAxis(EAxis::Y); // get right vector 
+
+	character->AddMovementInput(forward_direction, movement_vector.Y);
+	character->AddMovementInput(right_direction, movement_vector.X);
+
+	character->Set_Actor_Rotation_By_Yaw_On_Server(rotation_to_look.Yaw);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Attack_Pressed()

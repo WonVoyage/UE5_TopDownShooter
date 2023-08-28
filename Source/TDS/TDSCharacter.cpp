@@ -7,7 +7,7 @@
 AWeapon_Default *ATDSCharacter::Curr_Weapon = 0;
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
-:  Is_Alive(true), Lives(1), Curr_Slot_Index(0), Inventory(0), Movement_State(EMovement_State::Run), Sprint_Run_Enabled(false), Aim_Enabled(false), Walk_Enabled(false)
+:  Is_Alive(true), Lives(1), Curr_Slot_Index(0), Inventory(0), Sprint_Run_Enabled(false), Aim_Enabled(false), Walk_Enabled(false), Movement_State(EMovement_State::Run) 
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -41,6 +41,8 @@ ATDSCharacter::ATDSCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	bReplicates = true;
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Tick(float delta_seconds)
@@ -55,18 +57,6 @@ void ATDSCharacter::BeginPlay()
 
 	Init(Init_Weapon_Name, Weapon_Info, Curr_Slot_Index);
 }
-//-------------------------------------------------------------------------------------------------------------
-//float ATDSCharacter::TakeDamage(float damage_amount, struct FDamageEvent const& damage_event, class AController* event_instigator, AActor* damage_causer)
-//{
-//	float actual_damage;
-//
-//	actual_damage = Super::TakeDamage(damage_amount, damage_event, event_instigator, damage_causer);
-//	
-//	if (Is_Alive)
-//		Health->Change_Health(damage_amount * -1.0);
-//
-//	return actual_damage;
-//}
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Enable_Ragdoll()
 {
@@ -157,7 +147,6 @@ void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_add
 
 	if (Curr_Weapon)
 	{
-		//Curr_Weapon->Destroy();
 		Curr_Weapon = 0;
 	}
 
@@ -178,7 +167,6 @@ void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_add
 		weapon->AttachToComponent(GetMesh(), rule, FName("Weapon_Socket_Right_Hand"));
 		weapon->Settings = weapon_info;
 		weapon->Update_State(Movement_State);
-		//weapon->Info.Round = weapon->Settings.Max_Round;
 		weapon->Info = new_weapon_additional_info;
 
 		Curr_Slot_Index = new_index_weapon;
@@ -233,34 +221,37 @@ void ATDSCharacter::Update()
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Change_Movement_State()
 {
+	EMovement_State new_state = EMovement_State::Run;
+
 	if (!Is_Alive)
 		return;
 
 	if (!Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled )
-		Movement_State = EMovement_State::Run;
+		new_state = EMovement_State::Run;
 	else
 	{
 		if (Sprint_Run_Enabled)
 		{
 			Walk_Enabled = false;
 			Aim_Enabled = false;
-			Movement_State = EMovement_State::Sprint;
+			new_state = EMovement_State::Sprint;
 		}
 
 		if (Walk_Enabled && !Sprint_Run_Enabled && Aim_Enabled)
-			Movement_State = EMovement_State::Aim_Walk;
+			new_state = EMovement_State::Aim_Walk;
 		else
 			if (Walk_Enabled && !Sprint_Run_Enabled && !Aim_Enabled)
-				Movement_State = EMovement_State::Walk;
+				new_state = EMovement_State::Walk;
 			else
 				if (!Walk_Enabled && !Sprint_Run_Enabled && Aim_Enabled)
-					Movement_State = EMovement_State::Aim;
+					new_state = EMovement_State::Aim;
 	}
 
-	Update();
+	Set_Movement_State_On_Server(new_state);
+	//Update();
 
 	if (AWeapon_Default *weapon = Get_Weapon())
-		weapon->Update_State(Movement_State);
+		weapon->Update_State(new_state);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Switch_Next_Weapon()
@@ -275,11 +266,6 @@ void ATDSCharacter::Switch_Next_Weapon()
 
 		Inventory->Switch_Weapon_To_Index(Curr_Slot_Index + 1, old_index, old_info);
 	}	
-
-	//int old_index = Inventory->Curr_Slot_Index;
-	//FAdditional_Weapon_Info old_info = Curr_Weapon->Info;
-
-	//Inventory->Switch_Weapon_To_Index(Inventory->Curr_Slot_Index + 1, old_index, old_info);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Switch_Prev_Weapon()
@@ -314,6 +300,28 @@ void ATDSCharacter::BP_Weapon_Reload_Start_Implementation(UAnimMontage *anim)
 void ATDSCharacter::BP_Weapon_Reload_End_Implementation(bool is_success)
 {
 	// In BP
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Set_Actor_Rotation_By_Yaw_On_Server_Implementation(float yaw)
+{
+	Set_Actor_Rotation_By_Yaw_Multicast(yaw);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Set_Movement_State_On_Server_Implementation(EMovement_State new_state)
+{
+	Set_Movement_State_Multicast(new_state);
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Set_Actor_Rotation_By_Yaw_Multicast_Implementation(float yaw)
+{
+	if (Controller && !Controller->IsLocalPlayerController())
+		SetActorRotation(FQuat(FRotator(0.0, yaw, 0.0)));
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::Set_Movement_State_Multicast_Implementation(EMovement_State new_state)
+{
+	Movement_State = new_state;
+	Update();
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Weapon_Fire()
@@ -365,11 +373,11 @@ void ATDSCharacter::Dead()
 
 	GetWorldTimerManager().SetTimer(Ragdoll_Timer, this, &ATDSCharacter::Enable_Ragdoll, time_anim, false);
 	game_mode->BP_Dead();
-
-	//GetController()->UnPossess();
-	//UnPossessed();
-	//SetLifeSpan(1.0);
-
-	//GetWorld()->GetAuthGameMode();
+}
+//-------------------------------------------------------------------------------------------------------------
+void ATDSCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ATDSCharacter, Movement_State);
 }
 //-------------------------------------------------------------------------------------------------------------

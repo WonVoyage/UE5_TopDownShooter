@@ -23,8 +23,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UNiagaraSystem* FXCursor;	// FX Class that we will spawn when clicking
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputMappingContext* DefaultMappingContext;
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *SetDestinationClickAction;	// Jump Input Action
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *SetDestinationTouchAction;	// Jump Input Action 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Move_Action;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Attack_Action;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input") UInputAction *Reload_Action;

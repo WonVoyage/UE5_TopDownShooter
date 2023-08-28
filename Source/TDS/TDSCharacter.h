@@ -5,6 +5,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Net/UnrealNetwork.h"
+
 #include "Character_Health.h"
 #include "Game_Instance.h"
 #include "Weapon_Default.h"
@@ -23,7 +25,7 @@ public:
 	
 	virtual void Tick(float delta_seconds);
 	virtual void BeginPlay();
-	//virtual float TakeDamage(float damage_amount, struct FDamageEvent const& damage_event, class AController* event_instigator, AActor* damage_causer);
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
 	void Enable_Ragdoll();
 	void Fire_Tick(float delta_time);
@@ -40,6 +42,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent) void BP_Dead();
 	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_Start(UAnimMontage *anim);
 	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_End(bool is_success);
+	UFUNCTION(Server, Unreliable) void Set_Actor_Rotation_By_Yaw_On_Server(float yaw);
+	UFUNCTION(Server, Unreliable) void Set_Movement_State_On_Server(EMovement_State new_state);
+	UFUNCTION(NetMulticast, Unreliable) void Set_Actor_Rotation_By_Yaw_Multicast(float yaw);
+	UFUNCTION(NetMulticast, Unreliable) void Set_Movement_State_Multicast(EMovement_State new_state);
+
 	UFUNCTION() void Weapon_Fire();
 	UFUNCTION() void Weapon_Reload_Start(UAnimMontage *anim);
 	UFUNCTION() void Weapon_Reload_End(bool is_success, int ammo_safe);
@@ -56,7 +63,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") int Curr_Slot_Index;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory") UInventory *Inventory;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health") UCharacter_Health *Health;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") EMovement_State Movement_State;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") FCharacter_Speed Movement_Info;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") bool Sprint_Run_Enabled;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement") bool Walk_Enabled;
@@ -66,5 +72,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Demo") TSubclassOf<AWeapon_Default> Weapon_Class;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera") UCameraComponent* TopDownCameraComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera") USpringArmComponent* CameraBoom;
+	UPROPERTY(Replicated) EMovement_State Movement_State;
+
 };
 //-------------------------------------------------------------------------------------------------------------
