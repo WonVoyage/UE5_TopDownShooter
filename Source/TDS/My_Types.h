@@ -44,6 +44,7 @@ struct FProjectile_Info
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") TSubclassOf<class AProjectile_Default> Projectile = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") UStaticMesh* Mesh = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") USoundBase *Hit_Sound = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") USoundBase *Explose_Sound = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile_Settings") UParticleSystem *Explose_FX = 0;

@@ -112,136 +112,128 @@ void ATDSPlayerController::Move(const FInputActionValue& Value)
 
 	character->AddMovementInput(forward_direction, movement_vector.Y);
 	character->AddMovementInput(right_direction, movement_vector.X);
-
-	character->Set_Actor_Rotation_By_Yaw_On_Server(rotation_to_look.Yaw);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Attack_Pressed()
 {
-	AWeapon_Default *weapon;
-	weapon = ATDSCharacter::Get_Weapon();
+	ATDSCharacter* character;
 
-	if (weapon != 0)
-		weapon->Set_State_Fire(true);
-	else
-		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Attack_Pressed - Curr_Weapon - NULL"));
+	character = Cast<ATDSCharacter>(GetCharacter());
+
+	if (!character)
+		throw 23;
+
+	if (!character->Curr_Weapon)
+		throw 23;
+
+	character->Curr_Weapon->Is_Fire = true;
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Attack_Released()
 {
-	AWeapon_Default *weapon;
-	weapon = ATDSCharacter::Get_Weapon();
+	ATDSCharacter* character;
 
-	if (weapon != 0)
-		weapon->Set_State_Fire(false);
-	else
-		UE_LOG(LogTemp, Warning, TEXT("ATDSCharacter::Attack_Pressed - Curr_Weapon - NULL"));
+	character = Cast<ATDSCharacter>(GetCharacter());
+
+	if (!character)
+		throw 23;
+
+	if (!character->Curr_Weapon)
+		throw 23;
+
+	character->Curr_Weapon->Is_Fire = false;
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Try_Reload_Weapon()
 {
-	if (AWeapon_Default *weapon = ATDSCharacter::Get_Weapon())
-		if (weapon->Get_Round() < weapon->Settings.Max_Round && weapon->Can_Reload())
-			weapon->Init_Reload();
+	ATDSCharacter* character;
+
+	character = Cast<ATDSCharacter>(GetCharacter());
+
+	if (!character)
+		throw 23;
+
+	if (!character->Curr_Weapon)
+		throw 23;
+	
+	if (character->Curr_Weapon->Get_Round() < character->Curr_Weapon->Settings.Max_Round && character->Curr_Weapon->Can_Reload())
+		character->Curr_Weapon->Init_Reload();
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Change_Weapon_Slot_To_1()
 {
-	AWeapon_Default *weapon = ATDSCharacter::Get_Weapon();
-
-	if (!weapon)
-		throw 23;
-
-	if (!weapon->GetOwner())
-		throw 23;
-
-	UInventory *inventory = Cast<UInventory>(weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
-
-	if (!inventory)
-		throw 23;
-
 	ATDSCharacter* character;
 
-	character = Cast<ATDSCharacter>(weapon->GetOwner());
+	character = Cast<ATDSCharacter>(GetCharacter());
 
 	if (!character)
 		throw 23;
 
-	inventory->Switch_Weapon_To_Index(0, character->Curr_Slot_Index, weapon->Info);
+	if (!character->Curr_Weapon)
+		throw 23;
+
+	UInventory *inventory = Cast<UInventory>(character->Curr_Weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
+
+	if (!inventory)
+		throw 23;
+
+	inventory->Switch_Weapon_To_Index(0, character->Curr_Slot_Index, character->Curr_Weapon->Info);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Change_Weapon_Slot_To_2()
 {
-	AWeapon_Default *weapon = ATDSCharacter::Get_Weapon();
-
-	if (!weapon)
-		throw 23;
-
-	if (!weapon->GetOwner())
-		throw 23;
-
-	UInventory *inventory = Cast<UInventory>(weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
-
-	if (!inventory)
-		throw 23;
-
 	ATDSCharacter* character;
 
-	character = Cast<ATDSCharacter>(weapon->GetOwner());
+	character = Cast<ATDSCharacter>(GetCharacter());
 
 	if (!character)
 		throw 23;
 
-	inventory->Switch_Weapon_To_Index(1, character->Curr_Slot_Index, weapon->Info);
+	if (!character->Curr_Weapon)
+		throw 23;
+
+	UInventory *inventory = Cast<UInventory>(character->Curr_Weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
+
+	if (!inventory)
+		throw 23;
+
+	inventory->Switch_Weapon_To_Index(1, character->Curr_Slot_Index, character->Curr_Weapon->Info);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Change_Weapon_Slot_To_3()
 {
-	AWeapon_Default *weapon = ATDSCharacter::Get_Weapon();
-
-	if (!weapon)
-		throw 23;
-
-	if (!weapon->GetOwner())
-		throw 23;
-
-	UInventory *inventory = Cast<UInventory>(weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
-
-	if (!inventory)
-		throw 23;
-
 	ATDSCharacter* character;
 
-	character = Cast<ATDSCharacter>(weapon->GetOwner());
+	character = Cast<ATDSCharacter>(GetCharacter());
 
 	if (!character)
 		throw 23;
 
-	inventory->Switch_Weapon_To_Index(2, character->Curr_Slot_Index, weapon->Info);
+	if (!character->Curr_Weapon)
+		throw 23;
+
+	UInventory *inventory = Cast<UInventory>(character->Curr_Weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
+
+	if (!inventory)
+		throw 23;
+
+	inventory->Switch_Weapon_To_Index(2, character->Curr_Slot_Index, character->Curr_Weapon->Info);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSPlayerController::Change_Weapon_Slot_To_4()
 {
-	AWeapon_Default *weapon = ATDSCharacter::Get_Weapon();
+	ATDSCharacter* character;
 
-	if (!weapon)
+	character = Cast<ATDSCharacter>(GetCharacter());
+
+	if (!character->Curr_Weapon)
 		throw 23;
 
-	if (!weapon->GetOwner())
-		throw 23;
-
-	UInventory *inventory = Cast<UInventory>(weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
+	UInventory *inventory = Cast<UInventory>(character->Curr_Weapon->GetOwner()->GetComponentByClass(UInventory::StaticClass()));
 
 	if (!inventory)
 		throw 23;
 
-	ATDSCharacter* character;
-
-	character = Cast<ATDSCharacter>(weapon->GetOwner());
-
-	if (!character)
-		throw 23;
-
-	inventory->Switch_Weapon_To_Index(3, character->Curr_Slot_Index, weapon->Info);
+	inventory->Switch_Weapon_To_Index(3, character->Curr_Slot_Index, character->Curr_Weapon->Info);
 }
 //-------------------------------------------------------------------------------------------------------------

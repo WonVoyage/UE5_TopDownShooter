@@ -21,13 +21,14 @@ AWeapon_Default::AWeapon_Default()
 
 	Shoot_Location = CreateDefaultSubobject<UArrowComponent>(TEXT("Shoot_Location"));
 	Shoot_Location->SetupAttachment(RootComponent);
+
+	SetReplicates(true);
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Tick(float delta_time)
 {
 	Super::Tick(delta_time);
 	Reload_Tick(delta_time);
-	//Fire_Tick(delta_time);
 }
 //-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Reload_Tick(float delta_time)
@@ -41,26 +42,15 @@ void AWeapon_Default::Reload_Tick(float delta_time)
 		Reload_Timer -= delta_time;
 }
 //-------------------------------------------------------------------------------------------------------------
-//void AWeapon_Default::Fire_Tick(float delta_time)
-//{
-//	if (!Is_Fire)
-//		return;
-//
-//	if (Is_Fire && Get_Round() > 0 && !Reloading)
-//	{
-//		if (Fire_Timer <= 0.0)
-//		{
-//			Fire();
-//		}
-//		else
-//			Fire_Timer -= delta_time;
-//	}
-//}
+void AWeapon_Default::Fire_Server_Implementation()
+{
+	Fire_Multicast();
+}
 //-------------------------------------------------------------------------------------------------------------
-void AWeapon_Default::Fire()
+void AWeapon_Default::Fire_Multicast_Implementation()
 {
 	if (!Shoot_Location || !Settings.Projectile_Settings.Projectile)
-		throw 23;
+		return;
 
 	FVector spawn_location;
 	FRotator spawn_rotation;
@@ -117,19 +107,6 @@ void AWeapon_Default::Init_Reload()
 		On_Reload_Start.Broadcast(Settings.Animation_Character_Reload);
 }
 //-------------------------------------------------------------------------------------------------------------
-void AWeapon_Default::Set_State_Fire(bool is_fire)
-{
-	if (Can_Fire())
-		Is_Fire = is_fire;
-	else
-		Is_Fire = false;
-}
-//-------------------------------------------------------------------------------------------------------------
-void AWeapon_Default::Update_State(EMovement_State movement_state)
-{
-
-}
-//-------------------------------------------------------------------------------------------------------------
 void AWeapon_Default::Finish_Reload()
 {
 	int ammo_need_take;
@@ -164,11 +141,6 @@ void AWeapon_Default::Cancel_Reload()
 		Skeletal_Mesh->GetAnimInstance()->StopAllMontages(0.15);
 
 	On_Reload_End.Broadcast(false, 0);
-}
-//-------------------------------------------------------------------------------------------------------------
-bool AWeapon_Default::Can_Fire()
-{
-	return true;
 }
 //-------------------------------------------------------------------------------------------------------------
 bool AWeapon_Default::Can_Reload()
@@ -221,5 +193,12 @@ int AWeapon_Default::Get_Round()
 int AWeapon_Default::Get_Number_Projectile_By_Shot()
 {
 	return Settings.Projectile_By_Shot;
+}
+//-------------------------------------------------------------------------------------------------------------
+void AWeapon_Default::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AWeapon_Default, Info);
+	DOREPLIFETIME(AWeapon_Default, Is_Fire);
 }
 //-------------------------------------------------------------------------------------------------------------

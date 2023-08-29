@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 #include "Character_Health.h"
@@ -31,7 +32,7 @@ public:
 	void Fire_Tick(float delta_time);
 	void Drop_Weapon(int32 ByIndex, FDrop_Item &DropItemInfo);
 
-	static AWeapon_Default *Get_Weapon();
+	AWeapon_Default *Get_Weapon();
 	
 	UFUNCTION(BlueprintCallable) void Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info, int new_index_weapon);
 	UFUNCTION(BlueprintCallable) void Update();
@@ -42,8 +43,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent) void BP_Dead();
 	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_Start(UAnimMontage *anim);
 	UFUNCTION(BlueprintNativeEvent) void BP_Weapon_Reload_End(bool is_success);
-	UFUNCTION(Server, Unreliable) void Set_Actor_Rotation_By_Yaw_On_Server(float yaw);
-	UFUNCTION(Server, Unreliable) void Set_Movement_State_On_Server(EMovement_State new_state);
+	UFUNCTION(Server, Unreliable, BlueprintCallable) void Set_Actor_Rotation_By_Yaw_On_Server(float yaw);
+	UFUNCTION(Server, Unreliable, BlueprintCallable) void Set_Movement_State_On_Server(EMovement_State new_state);
 	UFUNCTION(NetMulticast, Unreliable) void Set_Actor_Rotation_By_Yaw_Multicast(float yaw);
 	UFUNCTION(NetMulticast, Unreliable) void Set_Movement_State_Multicast(EMovement_State new_state);
 
@@ -54,8 +55,6 @@ public:
 
 	// Variables
 	FTimerHandle Ragdoll_Timer;
-
-	static AWeapon_Default *Curr_Weapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lives") bool Is_Alive;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lives") int Lives;
@@ -72,6 +71,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Demo") TSubclassOf<AWeapon_Default> Weapon_Class;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera") UCameraComponent* TopDownCameraComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera") USpringArmComponent* CameraBoom;
+	UPROPERTY(Replicated) AWeapon_Default *Curr_Weapon;
 	UPROPERTY(Replicated) EMovement_State Movement_State;
 
 };

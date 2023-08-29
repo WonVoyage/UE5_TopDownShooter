@@ -7,6 +7,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AISense_Damage.h"
+#include "Net/UnrealNetwork.h"
+
 #include "My_Types.h"
 #include "Projectile_Default.generated.h"
 
@@ -28,6 +30,7 @@ public:
 	UFUNCTION(BlueprintCallable) virtual void Collision_Hit(class UPrimitiveComponent *hit_component, AActor *other_actor, UPrimitiveComponent *other_component, FVector normal_impulse, const FHitResult &hit);
 	UFUNCTION(BlueprintCallable) void Collision_Begin_Overlap(UPrimitiveComponent *overlapped_component, AActor *other_actor, UPrimitiveComponent *other_component, int32 other_body_index, bool from_sweep, const FHitResult &sweep_result);
 	UFUNCTION(BlueprintCallable) void Collision_End_Overlap(UPrimitiveComponent *overlapped_component, AActor *other_actor, UPrimitiveComponent *other_component, int32 other_body_index);
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable) void Init_Visible_Projectile_Multicast(UStaticMesh *mesh);
 
 	// Variables
 	FProjectile_Info Projectile_Settings;

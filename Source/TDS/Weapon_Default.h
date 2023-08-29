@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/ArrowComponent.h"
+#include "Net/UnrealNetwork.h"
+
 #include "Projectile_Default.h"
 #include "Inventory.h"
 #include "Weapon_Default.generated.h"
@@ -21,17 +23,15 @@ public:
 	AWeapon_Default();
 
 	virtual void Tick(float delta_time);
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	
 	void Reload_Tick(float delta_time);
-	//void Fire_Tick(float delta_time);
-	void Fire();
+	UFUNCTION(Server, Reliable) void Fire_Server();
+	UFUNCTION(NetMulticast, Reliable) void Fire_Multicast();
 	void Init();
 	void Init_Reload();
-	void Set_State_Fire(bool is_fire);
-	void Update_State(EMovement_State movement_state);
 	void Finish_Reload();
 	void Cancel_Reload();
-	bool Can_Fire();
 	bool Can_Reload();
 	int Get_Aviable_Ammo_For_Reload();
 	int Get_Round();
@@ -47,12 +47,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") USkeletalMeshComponent *Skeletal_Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") UStaticMeshComponent *Static_Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components") UArrowComponent *Shoot_Location;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Info") FAdditional_Weapon_Info Info;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Info") FWeapon_Info Settings;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Reload_Logic") float Reload_Timer;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Reload_Logic") bool Reloading;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Fire_Logic") float Fire_Timer;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire_Logic") bool Is_Fire;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite) bool Is_Fire;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite) FAdditional_Weapon_Info Info;
 
 protected:
 	// Functions

@@ -4,10 +4,9 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
-AWeapon_Default *ATDSCharacter::Curr_Weapon = 0;
 //-------------------------------------------------------------------------------------------------------------
 ATDSCharacter::ATDSCharacter()
-:  Is_Alive(true), Lives(1), Curr_Slot_Index(0), Inventory(0), Sprint_Run_Enabled(false), Aim_Enabled(false), Walk_Enabled(false), Movement_State(EMovement_State::Run) 
+: Is_Alive(true), Lives(1), Curr_Slot_Index(0), Inventory(0), Sprint_Run_Enabled(false), Aim_Enabled(false), Walk_Enabled(false), Curr_Weapon(0), Movement_State(EMovement_State::Run) 
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -84,7 +83,7 @@ void ATDSCharacter::Fire_Tick(float delta_seconds)
 	if (Curr_Weapon->Get_Round() > 0)
 	{
 		if (Curr_Weapon->Fire_Timer <= 0.0)
-			Curr_Weapon->Fire();
+			Curr_Weapon->Fire_Server();
 		else
 			Curr_Weapon->Fire_Timer -= delta_seconds;
 	}
@@ -166,7 +165,6 @@ void ATDSCharacter::Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_add
 
 		weapon->AttachToComponent(GetMesh(), rule, FName("Weapon_Socket_Right_Hand"));
 		weapon->Settings = weapon_info;
-		weapon->Update_State(Movement_State);
 		weapon->Info = new_weapon_additional_info;
 
 		Curr_Slot_Index = new_index_weapon;
@@ -248,10 +246,6 @@ void ATDSCharacter::Change_Movement_State()
 	}
 
 	Set_Movement_State_On_Server(new_state);
-	//Update();
-
-	if (AWeapon_Default *weapon = Get_Weapon())
-		weapon->Update_State(new_state);
 }
 //-------------------------------------------------------------------------------------------------------------
 void ATDSCharacter::Switch_Next_Weapon()
@@ -368,9 +362,6 @@ void ATDSCharacter::Dead()
 
 	Is_Alive = false;
 
-	//if (!GetController())
-	//	throw 23;
-
 	GetWorldTimerManager().SetTimer(Ragdoll_Timer, this, &ATDSCharacter::Enable_Ragdoll, time_anim, false);
 	game_mode->BP_Dead();
 }
@@ -379,5 +370,6 @@ void ATDSCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty> &OutLif
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ATDSCharacter, Movement_State);
+	DOREPLIFETIME(ATDSCharacter, Curr_Weapon);
 }
 //-------------------------------------------------------------------------------------------------------------

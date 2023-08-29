@@ -3,6 +3,7 @@
 //-------------------------------------------------------------------------------------------------------------
 AProjectile_Default::AProjectile_Default()
 {
+	SetReplicates(true);
 	PrimaryActorTick.bCanEverTick = true;
 
 	Bullet_Collision_Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Sphere"));
@@ -36,7 +37,12 @@ void AProjectile_Default::Init(FProjectile_Info init_param)
 {
 	Bullet_Projectile_Movement->InitialSpeed = init_param.Init_Speed;
 	Bullet_Projectile_Movement->MaxSpeed = init_param.Init_Speed;
-	this->SetLifeSpan(init_param.Life_Time);
+	SetLifeSpan(init_param.Life_Time);
+
+	if (init_param.Mesh)
+		Init_Visible_Projectile_Multicast(init_param.Mesh);
+	else
+		Bullet_Mesh->DestroyComponent();
 
 	Projectile_Settings = init_param;
 }
@@ -71,10 +77,6 @@ void AProjectile_Default::Collision_Hit(class UPrimitiveComponent *hit_component
 	UGameplayStatics::ApplyDamage(other_actor, Projectile_Settings.Damage, GetInstigatorController(), this, NULL);
 	UAISense_Damage::ReportDamageEvent(GetWorld(), hit.GetActor(), GetInstigator(), Projectile_Settings.Damage, hit.Location, hit.Location);
 	Impact_Projectile();	
-	//UGameplayStatics::ApplyRadialDamageWithFalloff()
-	//Apply damage cast to if char like bp? //OnAnyTakeDmage delegate
-	//UGameplayStatics::ApplyDamage(other_actor, Projectile_Settings.ProjectileDamage, GetOwner()->GetInstigatorController(), GetOwner(), NULL);
-	//or custom damage by health component
 }
 //-------------------------------------------------------------------------------------------------------------
 void AProjectile_Default::Collision_Begin_Overlap(UPrimitiveComponent *overlapped_component, AActor *other_actor, UPrimitiveComponent *other_component, int32 other_body_index, bool from_sweep, const FHitResult &sweep_result)
@@ -94,5 +96,10 @@ void AProjectile_Default::BeginPlay()
 	Bullet_Collision_Sphere->OnComponentHit.AddDynamic(this, &AProjectile_Default::Collision_Hit);
 	Bullet_Collision_Sphere->OnComponentBeginOverlap.AddDynamic(this, &AProjectile_Default::Collision_Begin_Overlap);
 	Bullet_Collision_Sphere->OnComponentEndOverlap.AddDynamic(this, &AProjectile_Default::Collision_End_Overlap);
+}
+//-------------------------------------------------------------------------------------------------------------
+void AProjectile_Default::Init_Visible_Projectile_Multicast_Implementation(UStaticMesh *mesh)
+{
+	Bullet_Mesh->SetStaticMesh(mesh);
 }
 //-------------------------------------------------------------------------------------------------------------
