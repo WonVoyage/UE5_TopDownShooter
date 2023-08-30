@@ -110,6 +110,27 @@ void UInventory::Save_Item_To_Inventory(FWeapon_Slot new_slot, int index_slot, i
 	return;
 }
 //-------------------------------------------------------------------------------------------------------------
+void UInventory::Clear_Weapon_Slot(int curr_slot)
+{
+	//FName drop_item_name;
+
+	//drop_item_name = Get_Weapon_Name_By_Slot_Index(curr_slot);
+
+	//if (UGame_Instance* game_instance = Cast<UGame_Instance>(GetWorld()->GetGameInstance()))
+	//	if (game_instance->Get_Drop_Item_Info_By_Name(drop_item_name, drop_item))
+	//	{
+	//		drop_item.Slot.Info = Weapon_Slot[curr_slot].Info;
+	//		drop_item.Slot.Name = TEXT("None");
+	//	}
+	//	else
+	//		throw 23;
+	//else
+	//	throw 23;
+
+	Weapon_Slot[curr_slot].Info.Round = 0;
+	Weapon_Slot[curr_slot].Name = TEXT("None");
+}
+//-------------------------------------------------------------------------------------------------------------
 bool UInventory::Get_Drop_Item_From_Inventory(int index_slot, FDrop_Item &drop_item)
 {
 	bool result;

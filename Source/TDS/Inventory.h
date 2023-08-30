@@ -35,12 +35,12 @@ public:
 	void Switch_Weapon_To_Index(int index_destination, int old_index, FAdditional_Weapon_Info old_info);
 	void Set_Additional_Weapon_Info(int old_index, FAdditional_Weapon_Info old_info);
 	void Save_Item_To_Inventory(FWeapon_Slot new_slot, int index_slot, int curr_index);
-	bool Get_Drop_Item_From_Inventory(int index, FDrop_Item &drop_item);
 	bool Check_Ammo_For_Weapon(EWeapon_Type weapon_type, int &available_ammo);
 	int Get_Weapon_Index_Slot_By_Name(FName weapon_name);
 
+	UFUNCTION(BlueprintCallable) void Clear_Weapon_Slot(int curr_slot);
 	UFUNCTION(BlueprintCallable) FName Get_Weapon_Name_By_Slot_Index(int index);
-
+	UFUNCTION(BlueprintCallable) bool Get_Drop_Item_From_Inventory(int index, FDrop_Item &drop_item);
 	UFUNCTION(BlueprintCallable) void Ammo_Slot_Change_Value(EWeapon_Type type_weapon, int ammo_taken);
 	UFUNCTION(BlueprintCallable) bool Can_Pickup_Ammo(EWeapon_Type weapon_type);
 	UFUNCTION(BlueprintCallable) bool Can_Pickup_Weapon(int &slot_number);

@@ -19,12 +19,13 @@ bool UGame_Instance::Get_Weapon_Info_By_Name(FName name_weapon, FWeapon_Info &ou
 //-------------------------------------------------------------------------------------------------------------
 bool UGame_Instance::Get_Drop_Item_Info_By_Name(FName name_item, FDrop_Item &out_info)
 {
-	if (!Weapon_Info_Table)
+	if (!Drop_Item_Info_Table)
 		throw 23;
 
 	FDrop_Item *drop_item_row;
+	drop_item_row = Drop_Item_Info_Table->FindRow<FDrop_Item>(name_item, "", false);
 
-	if (drop_item_row = Weapon_Info_Table->FindRow<FDrop_Item>(name_item, "", false))
+	if (drop_item_row)
 	{
 		out_info = *drop_item_row;
 		return true;

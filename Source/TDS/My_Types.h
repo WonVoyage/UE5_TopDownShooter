@@ -71,6 +71,7 @@ struct FWeapon_Slot
 {
 	GENERATED_BODY()
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") int Index = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") FName Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon_Slot") FAdditional_Weapon_Info Info;
 };
