@@ -32,7 +32,7 @@ public:
 	void Fire_Tick(float delta_time);
 	//void Drop_Weapon(int ByIndex, FDrop_Item &DropItemInfo);
 
-	AWeapon_Default *Get_Weapon();
+	UFUNCTION(BlueprintCallable) AWeapon_Default *Get_Weapon();
 	
 	UFUNCTION(BlueprintCallable) void Init(FName id_weapon, FAdditional_Weapon_Info new_weapon_additional_info, int new_index_weapon);
 	UFUNCTION(BlueprintCallable) void Update();
